@@ -525,7 +525,7 @@ dotnet_diagnostic.S6605.severity = none # Collection-specific "Exists" method sh
 [*.{cs,csx,cake}]
 
 # CS1591: Missing XML comment for publicly visible type or member
-dotnet_diagnostic.CS1591.severity = suggestion
+dotnet_diagnostic.CS1591.severity = none
 
 # SA1518: Use line endings correctly at end of file
 dotnet_diagnostic.SA1518.severity = none
@@ -538,3 +538,6 @@ dotnet_diagnostic.CA1515.severity = none
 
 # CA2000: Dispose objects before losing scope
 dotnet_diagnostic.CA2000.severity = none
+
+# CA1826: Do not use Enumerable methods on indexable collections
+dotnet_diagnostic.CA1826.severity = none
