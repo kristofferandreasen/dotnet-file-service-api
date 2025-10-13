@@ -1,4 +1,4 @@
-﻿using Azure.Storage.Blobs;
+using Azure.Storage.Blobs;
 
 namespace DotNet.FileService.Api.Endpoints.V1;
 
@@ -24,7 +24,7 @@ public static class DownloadEndpoint
 
             return Results.File(stream, "application/octet-stream", fileName);
         })
-        .RequireAuthorization()
+        .RequireAuthorization("ReadAccess")
         .WithName("DownloadFile")
         .WithSummary("Downloads a file from Azure Blob Storage");
     }

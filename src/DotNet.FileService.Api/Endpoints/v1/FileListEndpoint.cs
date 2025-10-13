@@ -1,4 +1,4 @@
-﻿using Azure.Storage.Blobs;
+using Azure.Storage.Blobs;
 
 namespace DotNet.FileService.Api.Endpoints.V1;
 
@@ -19,7 +19,7 @@ public static class FileListEndpoint
 
             return Results.Ok(urls);
         })
-        .RequireAuthorization()
+        .RequireAuthorization("ReadAccess")
         .WithName("ListFiles")
         .WithSummary("Lists all files in Azure Blob Storage");
     }

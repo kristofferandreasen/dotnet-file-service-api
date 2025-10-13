@@ -29,7 +29,7 @@ public static class UploadEndpoint
 
             return Results.Ok(new { fileUrl = blobClient.Uri.ToString() });
         })
-        .RequireAuthorization()
+        .RequireAuthorization("WriteAccess")
         .WithName("UploadFile")
         .WithSummary("Uploads a file to Azure Blob Storage");
     }
