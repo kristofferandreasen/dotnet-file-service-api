@@ -1,4 +1,4 @@
-using DotNet.FileService.Api.Endpoints.v1;
+using DotNet.FileService.Api.Endpoints.V1;
 
 var builder = WebApplication.CreateBuilder(args);
 
