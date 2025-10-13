@@ -1,13 +1,13 @@
 ﻿using Azure.Storage.Blobs;
 
-namespace DotNet.FileService.Api.Endpoints;
+namespace DotNet.FileService.Api.Endpoints.V1;
 
 public static class FileListEndpoint
 {
     public static void MapFileListEndpoint(
     this IEndpointRouteBuilder app)
     {
-        app.MapGet("/files", (BlobServiceClient blobServiceClient, IConfiguration config) =>
+        app.MapGet("v1/files", (BlobServiceClient blobServiceClient, IConfiguration config) =>
         {
             var containerName = config["AzureStorage:ContainerName"];
             var containerClient = blobServiceClient.GetBlobContainerClient(containerName);

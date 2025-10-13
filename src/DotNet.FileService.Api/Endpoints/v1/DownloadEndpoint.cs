@@ -1,12 +1,12 @@
 ﻿using Azure.Storage.Blobs;
 
-namespace DotNet.FileService.Api.Endpoints;
+namespace DotNet.FileService.Api.Endpoints.V1;
 
 public static class DownloadEndpoint
 {
     public static void MapDownloadEndpoint(this IEndpointRouteBuilder app)
     {
-        app.MapGet("/download/{fileName}", async (
+        app.MapGet("v1/download/{fileName}", async (
             string fileName,
             BlobServiceClient blobServiceClient,
             IConfiguration config) =>

@@ -1,12 +1,12 @@
 using Azure.Storage.Blobs;
 
-namespace DotNet.FileService.Api.Endpoints;
+namespace DotNet.FileService.Api.Endpoints.V1;
 
 public static class UploadEndpoint
 {
     public static void MapUploadEndpoint(this IEndpointRouteBuilder app)
     {
-        app.MapPost("/upload", async (
+        app.MapPost("v1/upload", async (
             HttpRequest request,
             BlobServiceClient blobServiceClient,
             IConfiguration config) =>
