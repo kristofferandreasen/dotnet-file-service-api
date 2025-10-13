@@ -1,5 +1,5 @@
 using Azure.Storage.Blobs;
-using DotNet.FileService.Api.Endpoints.V1;
+using DotNet.FileService.Api.Endpoints.V1.Files;
 using DotNet.FileService.Api.Infrastructure.BlobStorage;
 using DotNet.FileService.Api.Swagger;
 
@@ -18,6 +18,9 @@ var containerName = "FileServiceContainerName";
 
 builder.Services.AddSingleton<IBlobStorageService>(
     _ => new BlobStorageService(new BlobServiceClient(blobConnectionString), containerName));
+
+builder.Services.AddSingleton<ISasTokenService>(
+    _ => new SasTokenService(new BlobServiceClient(blobConnectionString), containerName));
 
 var app = builder.Build();
 

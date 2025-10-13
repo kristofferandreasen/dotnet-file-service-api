@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 
-namespace DotNet.FileService.Api.Endpoints.V1;
+namespace DotNet.FileService.Api.Endpoints.V1.Files;
 
 public static class DownloadEndpoint
 {

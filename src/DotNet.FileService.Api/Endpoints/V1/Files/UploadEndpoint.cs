@@ -1,6 +1,6 @@
 using Azure.Storage.Blobs;
 
-namespace DotNet.FileService.Api.Endpoints.V1;
+namespace DotNet.FileService.Api.Endpoints.V1.Files;
 
 public static class UploadEndpoint
 {
