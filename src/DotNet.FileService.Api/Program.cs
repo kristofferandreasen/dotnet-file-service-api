@@ -6,7 +6,8 @@ using DotNet.FileService.Api.Swagger;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAuthorization();
-builder.Services.AddConfiguredSwagger();
+builder.Services.AddConfiguredSwagger(builder.Configuration);
+builder.Services.AddProblemDetails();
 
 builder.Services.AddAuthorizationBuilder()
     .AddPolicy("ReadAccess", policy => policy.RequireRole("Read"))
@@ -24,10 +25,19 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseExceptionHandler();
+app.UseStatusCodePages();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.OAuthClientId(builder.Configuration["AzureAd:SwaggerClientId"]);
+        c.OAuthUsePkce();
+        c.OAuthScopeSeparator(" ");
+        c.OAuthAppName("File Service API - Swagger");
+    });
 }
 
 // Redirect root path to Swagger page
