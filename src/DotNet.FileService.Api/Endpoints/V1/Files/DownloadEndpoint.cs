@@ -1,4 +1,4 @@
-using Azure.Storage.Blobs;
+using DotNet.FileService.Api.Infrastructure.BlobStorage;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
@@ -10,25 +10,20 @@ public static class DownloadEndpoint
     public static void MapDownloadEndpoint(this IEndpointRouteBuilder app)
     {
         app.MapGet("v1/download/{fileName}", async (
-            string fileName,
-            BlobServiceClient blobServiceClient,
-            IConfiguration config) =>
+            [FromServices] IBlobStorageService blobStorageService,
+            string fileName) =>
         {
-            var containerName = config["AzureStorage:ContainerName"];
-            var containerClient = blobServiceClient.GetBlobContainerClient(containerName);
-            var blobClient = containerClient.GetBlobClient(fileName);
+            var fileStream = await blobStorageService.DownloadFileAsync(fileName);
 
-            if (!await blobClient.ExistsAsync())
+            if (fileStream is null)
             {
                 return TypedResults.Problem(
                     statusCode: StatusCodes.Status404NotFound,
                     title: "File Not Found",
-                    detail: $"The file '{fileName}' does not exist in the configured blob container.");
+                    detail: $"The file '{fileName}' does not exist in blob storage.");
             }
 
-            var stream = await blobClient.OpenReadAsync();
-
-            return Results.File(stream, "application/octet-stream", fileName);
+            return Results.File(fileStream, "application/octet-stream", fileName);
         })
         .RequireAuthorization("ReadAccess")
         .WithName("DownloadFile")

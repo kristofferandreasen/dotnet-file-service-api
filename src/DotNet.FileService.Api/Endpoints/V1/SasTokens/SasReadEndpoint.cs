@@ -17,7 +17,7 @@ public static class SasReadEndpoint
     {
         app.MapGet("v1/sas/read/{fileName}", (
             string fileName,
-            SasTokenService sasService) =>
+            ISasTokenService sasService) =>
         {
             var sasUrl = sasService.GetReadSasUrl(fileName);
 

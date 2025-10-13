@@ -1,4 +1,5 @@
-using Azure.Storage.Blobs;
+using DotNet.FileService.Api.Infrastructure.BlobStorage;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DotNet.FileService.Api.Endpoints.V1.Files;
 
@@ -7,15 +8,10 @@ public static class FileListEndpoint
     public static void MapFileListEndpoint(
     this IEndpointRouteBuilder app)
     {
-        app.MapGet("v1/files", (BlobServiceClient blobServiceClient, IConfiguration config) =>
+        app.MapGet("v1/files", (
+            [FromServices] IBlobStorageService blobStorageService) =>
         {
-            var containerName = config["AzureStorage:ContainerName"];
-            var containerClient = blobServiceClient.GetBlobContainerClient(containerName);
-
-            var blobs = containerClient.GetBlobs();
-
-            var urls = blobs
-                .Select(b => containerClient.GetBlobClient(b.Name).Uri.ToString());
+            var urls = blobStorageService.ListFiles();
 
             return Results.Ok(urls);
         })

@@ -8,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAuthorization();
 builder.Services.AddConfiguredSwagger(builder.Configuration);
 builder.Services.AddProblemDetails();
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddAuthorizationBuilder()
     .AddPolicy("ReadAccess", policy => policy.RequireRole("Read"))
