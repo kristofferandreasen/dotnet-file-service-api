@@ -6,6 +6,14 @@ using DotNet.FileService.Api.Swagger;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer("Bearer", options =>
+    {
+        options.Authority = "https://your-auth-server";
+        options.Audience = "file-api";
+        options.RequireHttpsMetadata = true;
+    });
+
 builder.Services.AddAuthorization();
 builder.Services.AddConfiguredSwagger(builder.Configuration);
 builder.Services.AddProblemDetails();
