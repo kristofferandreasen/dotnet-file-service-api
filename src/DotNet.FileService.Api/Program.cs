@@ -1,6 +1,7 @@
 using Azure.Storage.Blobs;
 using DotNet.FileService.Api.Authorization;
 using DotNet.FileService.Api.Endpoints.V1.Files;
+using DotNet.FileService.Api.Endpoints.V1.SasTokens;
 using DotNet.FileService.Api.Infrastructure.BlobStorage;
 using DotNet.FileService.Api.Swagger;
 
@@ -59,9 +60,13 @@ if (app.Environment.IsDevelopment())
 app.MapGet("/", context => Task.Run(()
     => context.Response.Redirect("/swagger/index.html")));
 
-// Map endpoint groups
+// Map file endpoints
 app.MapUploadEndpoint();
 app.MapFileListEndpoint();
 app.MapDownloadEndpoint();
+
+// Map sas endpoints
+app.MapSasReadEndpoint();
+app.MapSasWriteEndpoint();
 
 app.Run();
