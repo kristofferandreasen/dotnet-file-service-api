@@ -1,3 +1,4 @@
+using DotNet.FileService.Api.Infrastructure.Options;
 using Microsoft.OpenApi.Models;
 
 namespace DotNet.FileService.Api.Swagger;
@@ -11,11 +12,11 @@ public static class SwaggerConfigurationExtensions
     /// Adds and configures Swagger generation with Azure AD OAuth2 authentication support.
     /// </summary>
     /// <param name="services">The service collection to add Swagger configuration to.</param>
-    /// <param name="configuration">The application configuration.</param>
+    /// <param name="azureAdOptions">AzureAd Options.</param>
     /// <returns>The same service collection, for chaining.</returns>
     public static IServiceCollection AddConfiguredSwagger(
         this IServiceCollection services,
-        IConfiguration configuration)
+        AzureAdOptions azureAdOptions)
     {
         services.AddEndpointsApiExplorer();
 
@@ -28,14 +29,7 @@ public static class SwaggerConfigurationExtensions
                 Description = "API for managing file uploads, downloads, and listings in Azure Blob Storage.",
             });
 
-            // 🔹 Load Azure AD details from config
-            var azureAdConfig = configuration.GetSection("AzureAd");
-            var instance = azureAdConfig["Instance"];
-            var tenantId = azureAdConfig["TenantId"];
-            var clientId = azureAdConfig["ClientId"];
-            var audience = azureAdConfig["Audience"] ?? clientId;
-
-            // 🔹 Define OAuth2 flow for Microsoft login
+            // Define OAuth2 flow for Microsoft login
             c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
             {
                 Type = SecuritySchemeType.OAuth2,
@@ -43,18 +37,18 @@ public static class SwaggerConfigurationExtensions
                 {
                     AuthorizationCode = new OpenApiOAuthFlow
                     {
-                        AuthorizationUrl = new Uri($"{instance}{tenantId}/oauth2/v2.0/authorize"),
-                        TokenUrl = new Uri($"{instance}{tenantId}/oauth2/v2.0/token"),
+                        AuthorizationUrl = new Uri($"{azureAdOptions.Instance}{azureAdOptions.TenantId}/oauth2/v2.0/authorize"),
+                        TokenUrl = new Uri($"{azureAdOptions.Instance}{azureAdOptions.TenantId}/oauth2/v2.0/token"),
                         Scopes = new Dictionary<string, string>
                         {
-                            { $"api://{audience}/.default", "Access the File Service API" },
+                            { $"api://{azureAdOptions.Audience}/.default", "Access the File Service API" },
                         },
                     },
                 },
                 Description = "Login with Microsoft (Azure AD)",
             });
 
-            // 🔹 Apply security to all endpoints
+            // Apply security to all endpoints
             c.AddSecurityRequirement(new OpenApiSecurityRequirement
             {
                 {
@@ -66,7 +60,7 @@ public static class SwaggerConfigurationExtensions
                             Id = "oauth2",
                         },
                     },
-                    new[] { $"api://{audience}/.default" }
+                    new[] { $"api://{azureAdOptions.Audience}/.default" }
                 },
             });
         });

@@ -3,9 +3,28 @@ using DotNet.FileService.Api.Authorization;
 using DotNet.FileService.Api.Endpoints.V1.Files;
 using DotNet.FileService.Api.Endpoints.V1.SasTokens;
 using DotNet.FileService.Api.Infrastructure.BlobStorage;
+using DotNet.FileService.Api.Infrastructure.Options;
 using DotNet.FileService.Api.Swagger;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Bind options (for use with IOptions<>)
+builder.Services.Configure<AzureAdOptions>(
+    builder.Configuration.GetSection(AzureAdOptions.SectionName));
+
+// Bind options (for use with IOptions<>)
+builder.Services.Configure<ServiceOptions>(
+    builder.Configuration.GetSection(ServiceOptions.SectionName));
+
+// Retrieve strongly typed config instances for immediate use
+var azureAdOptions = builder.Configuration
+    .GetSection(AzureAdOptions.SectionName)
+    .Get<AzureAdOptions>()!;
+
+// Retrieve strongly typed config instances for immediate use
+var serviceOptions = builder.Configuration
+    .GetSection(ServiceOptions.SectionName)
+    .Get<ServiceOptions>()!;
 
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
@@ -16,7 +35,7 @@ builder.Services.AddAuthentication("Bearer")
     });
 
 builder.Services.AddAuthorization();
-builder.Services.AddConfiguredSwagger(builder.Configuration);
+builder.Services.AddConfiguredSwagger(azureAdOptions);
 builder.Services.AddProblemDetails();
 builder.Services.AddHttpContextAccessor();
 
@@ -26,14 +45,15 @@ builder.Services.AddAuthorizationBuilder()
     .AddPolicy(PolicyConstants.SasTokenReadAccess, policy => policy.RequireRole(RoleConstants.SasTokenReader))
     .AddPolicy(PolicyConstants.SasTokenWriteAccess, policy => policy.RequireRole(RoleConstants.SasTokenWriter));
 
-var blobConnectionString = "blobConnectionString";
-var containerName = "FileServiceContainerName";
-
 builder.Services.AddSingleton<IBlobStorageService>(
-    _ => new BlobStorageService(new BlobServiceClient(blobConnectionString), containerName));
+    _ => new BlobStorageService(
+        new BlobServiceClient(serviceOptions.StorageAccountConnectionString),
+        serviceOptions.BlobContainerName));
 
 builder.Services.AddSingleton<ISasTokenService>(
-    _ => new SasTokenService(new BlobServiceClient(blobConnectionString), containerName));
+    _ => new SasTokenService(
+        new BlobServiceClient(serviceOptions.StorageAccountConnectionString),
+        serviceOptions.BlobContainerName));
 
 var app = builder.Build();
 
