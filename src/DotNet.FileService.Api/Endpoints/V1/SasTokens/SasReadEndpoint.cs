@@ -1,3 +1,4 @@
+using DotNet.FileService.Api.Authorization;
 using DotNet.FileService.Api.Infrastructure.BlobStorage;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
@@ -23,9 +24,9 @@ public static class SasReadEndpoint
 
             return TypedResults.Ok(new { sasUrl });
         })
-        .RequireAuthorization("ReadAccess")
+        .RequireAuthorization(RoleConstants.SasTokenReader)
         .WithName("GetReadSasUrl")
-        .WithTags("SAS")
+        .WithTags(OpenApiConstants.SasTokenTag)
         .WithSummary("Generates a read-only SAS URL for a blob.")
         .WithDescription("Returns a time-limited SAS URL that allows read-only access to the specified blob.")
         .Produces(StatusCodes.Status200OK)

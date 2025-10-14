@@ -1,3 +1,4 @@
+using DotNet.FileService.Api.Authorization;
 using DotNet.FileService.Api.Infrastructure.BlobStorage;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
@@ -23,9 +24,9 @@ public static class SasWriteEndpoint
 
             return TypedResults.Ok(new { sasUrl });
         })
-        .RequireAuthorization("WriteAccess")
+        .RequireAuthorization(RoleConstants.SasTokenReader)
         .WithName("GetWriteSasUrl")
-        .WithTags("SAS")
+        .WithTags(OpenApiConstants.SasTokenTag)
         .WithSummary("Generates a write-only SAS URL for a blob.")
         .WithDescription("Returns a time-limited SAS URL that allows write-only access for uploading a specific blob.")
         .Produces(StatusCodes.Status200OK)
@@ -52,11 +53,11 @@ public static class SasWriteEndpoint
             },
             Responses =
             {
-                ["200"] = new Microsoft.OpenApi.Models.OpenApiResponse
+                ["200"] = new OpenApiResponse
                 {
                     Description = "Successfully generated SAS URL.",
                 },
-                ["400"] = new Microsoft.OpenApi.Models.OpenApiResponse
+                ["400"] = new OpenApiResponse
                 {
                     Description = "Invalid request.",
                 },

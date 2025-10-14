@@ -463,7 +463,7 @@ dotnet_diagnostic.MA0089.severity = suggestion
 # https://docs.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/
 dotnet_diagnostic.CA1014.severity = none # https://github.com/atc-net/atc-coding-rules/blob/main/documentation/CodeAnalyzersRules/MicrosoftCodeAnalysis/CA1014.md
 dotnet_diagnostic.CA1068.severity = error # https://github.com/atc-net/atc-coding-rules/blob/main/documentation/CodeAnalyzersRules/MicrosoftCodeAnalysis/CA1068.md
-dotnet_diagnostic.CA1305.severity = error
+dotnet_diagnostic.CA1305.severity = none
 dotnet_diagnostic.CA1308.severity = suggestion
 dotnet_diagnostic.CA1707.severity = error # https://github.com/atc-net/atc-coding-rules/blob/main/documentation/CodeAnalyzersRules/MicrosoftCodeAnalysis/CA1707.md
 dotnet_diagnostic.CA1812.severity = none

@@ -1,3 +1,4 @@
+using DotNet.FileService.Api.Authorization;
 using DotNet.FileService.Api.Infrastructure.BlobStorage;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -25,8 +26,9 @@ public static class DownloadEndpoint
 
             return Results.File(fileStream, "application/octet-stream", fileName);
         })
-        .RequireAuthorization("ReadAccess")
+        .RequireAuthorization(RoleConstants.BlobReader)
         .WithName("DownloadFile")
+        .WithTags(OpenApiConstants.FilesTag)
         .WithSummary("Downloads a file from Azure Blob Storage")
         .WithDescription("Retrieves a file by name from the configured Azure Blob Storage container. Requires the 'ReadAccess' role.")
         .Produces<FileStreamHttpResult>(StatusCodes.Status200OK, "application/octet-stream")
@@ -37,10 +39,6 @@ public static class DownloadEndpoint
             Summary = "Download a file",
             Description = "Downloads a file from Azure Blob Storage using its name. Returns 404 if the file does not exist.",
             OperationId = "DownloadFile",
-            Tags =
-            [
-                new() { Name = "Files" },
-            ],
             Parameters =
             {
                 new()

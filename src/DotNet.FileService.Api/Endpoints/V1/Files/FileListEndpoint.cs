@@ -17,6 +17,7 @@ public static class FileListEndpoint
         })
         .RequireAuthorization("ReadAccess")
         .WithName("ListFiles")
+        .WithTags(OpenApiConstants.FilesTag)
         .WithSummary("Lists all files in Azure Blob Storage");
     }
 }

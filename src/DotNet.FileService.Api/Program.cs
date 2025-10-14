@@ -1,4 +1,5 @@
 using Azure.Storage.Blobs;
+using DotNet.FileService.Api.Authorization;
 using DotNet.FileService.Api.Endpoints.V1.Files;
 using DotNet.FileService.Api.Infrastructure.BlobStorage;
 using DotNet.FileService.Api.Swagger;
@@ -11,8 +12,10 @@ builder.Services.AddProblemDetails();
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddAuthorizationBuilder()
-    .AddPolicy("ReadAccess", policy => policy.RequireRole("Read"))
-    .AddPolicy("WriteAccess", policy => policy.RequireRole("Write"));
+    .AddPolicy(PolicyConstants.BlobReadAccess, policy => policy.RequireRole(RoleConstants.BlobReader))
+    .AddPolicy(PolicyConstants.BlobWriteAccess, policy => policy.RequireRole(RoleConstants.BlobWriter))
+    .AddPolicy(PolicyConstants.SasTokenReadAccess, policy => policy.RequireRole(RoleConstants.SasTokenReader))
+    .AddPolicy(PolicyConstants.SasTokenWriteAccess, policy => policy.RequireRole(RoleConstants.SasTokenWriter));
 
 var blobConnectionString = "blobConnectionString";
 var containerName = "FileServiceContainerName";
