@@ -23,7 +23,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "deployment", "deployment", 
 		deployment\create-swagger-registration.ps1 = deployment\create-swagger-registration.ps1
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNet.FileService.Api.Client", "DotNet.FileService.Api.Client\DotNet.FileService.Api.Client.csproj", "{7ACB8665-374D-49DB-B472-E7DA854F3FE9}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{AF75EA20-90CB-41AE-AAA4-0E0FA7BD174E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{6C025242-D91F-48EE-86D0-62078F3219EC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNet.FileService.Api.Client", "src\DotNet.FileService.Api.Client\DotNet.FileService.Api.Client.csproj", "{77A69DF0-2510-421D-B6E6-D237967E4B73}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,13 +47,19 @@ Global
 		{0F041DCC-936F-4EE9-AFBC-C3C76C6D0C0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0F041DCC-936F-4EE9-AFBC-C3C76C6D0C0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0F041DCC-936F-4EE9-AFBC-C3C76C6D0C0D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7ACB8665-374D-49DB-B472-E7DA854F3FE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7ACB8665-374D-49DB-B472-E7DA854F3FE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7ACB8665-374D-49DB-B472-E7DA854F3FE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7ACB8665-374D-49DB-B472-E7DA854F3FE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77A69DF0-2510-421D-B6E6-D237967E4B73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77A69DF0-2510-421D-B6E6-D237967E4B73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77A69DF0-2510-421D-B6E6-D237967E4B73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77A69DF0-2510-421D-B6E6-D237967E4B73}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{AA23DD3D-23EC-CEB1-F75D-F1836D3C35DA} = {AF75EA20-90CB-41AE-AAA4-0E0FA7BD174E}
+		{2EE5D5FB-F02F-49BF-9344-0E5726ED99BB} = {AF75EA20-90CB-41AE-AAA4-0E0FA7BD174E}
+		{0F041DCC-936F-4EE9-AFBC-C3C76C6D0C0D} = {AF75EA20-90CB-41AE-AAA4-0E0FA7BD174E}
+		{77A69DF0-2510-421D-B6E6-D237967E4B73} = {AF75EA20-90CB-41AE-AAA4-0E0FA7BD174E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3611093F-0390-4AA2-A142-7C1DF05A3853}
