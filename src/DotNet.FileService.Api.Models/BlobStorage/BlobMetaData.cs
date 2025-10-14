@@ -10,6 +10,11 @@ namespace DotNet.FileService.Api.Models.BlobStorage;
 public class BlobMetadata
 {
     /// <summary>
+    /// An id for a customer or user associated with the file.
+    /// </summary>
+    public string? CustomerId { get; set; }
+
+    /// <summary>
     /// The original name of the file before upload.
     /// </summary>
     public string? OriginalFileName { get; set; }
