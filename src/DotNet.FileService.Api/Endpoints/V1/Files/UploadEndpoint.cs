@@ -1,43 +1,46 @@
 using DotNet.FileService.Api.Authorization;
 using DotNet.FileService.Api.Infrastructure.BlobStorage;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.OpenApi.Models;
 
 namespace DotNet.FileService.Api.Endpoints.V1.Files;
 
-/// <summary>
-/// Provides an endpoint for uploading files to Azure Blob Storage.
-/// </summary>
 public static class UploadEndpoint
 {
-    /// <summary>
-    /// Maps the endpoint that uploads a file to Azure Blob Storage.
-    /// </summary>
-    /// <param name="app">The endpoint route builder.</param>
+    private const string EndpointName = "UploadFile";
+    private const string EndpointRoute = "v1/upload";
+    private const string EndpointSummary = "Uploads a file to Azure Blob Storage.";
+    private const string EndpointDescription =
+        "Accepts a multipart/form-data request containing a file and uploads it to Azure Blob Storage. " +
+        "Requires the 'WriteAccess' role.";
+
+    private const string DefaultContentType = "application/json";
+    private const string MultipartFormData = "multipart/form-data";
+
     public static void MapUploadEndpoint(this IEndpointRouteBuilder app)
     {
-        app.MapPost("v1/upload", HandleUploadAsync)
+        app.MapPost(EndpointRoute, HandleUploadAsync)
             .RequireAuthorization(RoleConstants.BlobWriter)
-            .WithName("UploadFile")
+            .WithName(EndpointName)
             .WithTags(OpenApiConstants.FilesTag)
-            .WithSummary("Uploads a file to Azure Blob Storage.")
-            .WithDescription("Accepts a multipart/form-data request containing a file and uploads it to Azure Blob Storage. Requires 'WriteAccess' authorization.")
-            .Accepts<IFormFile>("multipart/form-data")
-            .Produces(StatusCodes.Status200OK)
-            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")
-            .Produces<ProblemDetails>(StatusCodes.Status500InternalServerError, "application/problem+json")
+            .WithSummary(EndpointSummary)
+            .WithDescription(EndpointDescription)
+            .Accepts<IFormFile>(MultipartFormData)
+            .Produces<string>(StatusCodes.Status200OK, DefaultContentType)
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status500InternalServerError)
             .WithOpenApi(CreateOpenApiOperation);
     }
 
-    private static async Task<IResult> HandleUploadAsync(
-        [FromServices] IBlobStorageService blobStorageService,
+    private static async Task<Results<Ok<string>, ProblemHttpResult>> HandleUploadAsync(
+        IBlobStorageService blobStorageService,
         HttpContext httpContext)
     {
         var request = httpContext.Request;
         var form = await request.ReadFormAsync();
         var file = form.Files.FirstOrDefault();
 
-        if (file == null)
+        if (file is null)
         {
             return TypedResults.Problem(
                 statusCode: StatusCodes.Status400BadRequest,
@@ -48,17 +51,15 @@ public static class UploadEndpoint
         await using var stream = file.OpenReadStream();
         var fileUrl = await blobStorageService.UploadFileAsync(stream, file.FileName);
 
-        return TypedResults.Ok(new { fileUrl });
+        return TypedResults.Ok(fileUrl);
     }
 
-    /// <summary>
-    /// Creates the OpenAPI operation definition for the upload endpoint.
-    /// </summary>
     private static OpenApiOperation CreateOpenApiOperation(OpenApiOperation op)
     {
-        op.Summary = "Upload a file";
-        op.Description = "Uploads a file to Azure Blob Storage and returns its public URL.";
-        op.OperationId = "UploadFile";
+        op.OperationId = EndpointName;
+        op.Summary = EndpointSummary;
+        op.Description = EndpointDescription;
+        op.Tags = [new() { Name = OpenApiConstants.FilesTag }];
 
         op.RequestBody = new OpenApiRequestBody
         {
@@ -66,7 +67,7 @@ public static class UploadEndpoint
             Required = true,
             Content =
             {
-                ["multipart/form-data"] = new OpenApiMediaType
+                [MultipartFormData] = new OpenApiMediaType
                 {
                     Schema = new OpenApiSchema
                     {
@@ -88,9 +89,18 @@ public static class UploadEndpoint
 
         op.Responses = new OpenApiResponses
         {
-            [StatusCodes.Status200OK.ToString()] = new OpenApiResponse { Description = "File successfully uploaded." },
-            [StatusCodes.Status400BadRequest.ToString()] = new OpenApiResponse { Description = "No file was provided or the request was invalid." },
-            [StatusCodes.Status500InternalServerError.ToString()] = new OpenApiResponse { Description = "An unexpected error occurred while uploading the file." },
+            [StatusCodes.Status200OK.ToString()] = new OpenApiResponse
+            {
+                Description = "File successfully uploaded.",
+            },
+            [StatusCodes.Status400BadRequest.ToString()] = new OpenApiResponse
+            {
+                Description = "No file was provided or the request was invalid.",
+            },
+            [StatusCodes.Status500InternalServerError.ToString()] = new OpenApiResponse
+            {
+                Description = "An unexpected error occurred while uploading the file.",
+            },
         };
 
         return op;

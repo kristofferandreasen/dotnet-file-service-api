@@ -17,8 +17,8 @@ public static class SasWriteEndpoint
     public static void MapSasWriteEndpoint(this IEndpointRouteBuilder app)
     {
         app.MapGet("v1/sas/write/{fileName}", (
-            string fileName,
-            ISasTokenService sasService) =>
+            ISasTokenService sasService,
+            string fileName) =>
         {
             var sasUrl = sasService.GetWriteSasUrl(fileName);
 
