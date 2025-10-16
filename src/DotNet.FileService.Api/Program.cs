@@ -80,6 +80,10 @@ if (app.Environment.IsDevelopment())
 app.MapGet("/", context => Task.Run(()
     => context.Response.Redirect("/swagger/index.html")));
 
+// Public health check (no auth)
+app.MapGet("/health", () => Results.Ok("OK"))
+   .AllowAnonymous();
+
 // Map file endpoints
 app.MapUploadEndpoint();
 app.MapFileListEndpoint();
