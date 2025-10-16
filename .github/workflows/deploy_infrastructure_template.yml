@@ -46,7 +46,7 @@
 
 # Add Federated Credential (for subscription id)
 #  az ad app federated-credential create --id 9c16951b-357c-4f25-8695-641d6b5cb19c --parameters '{
-#    "name": "github-actions-deploy",
+#    "name": "github-actions-deploy-file-service-api",
 #    "issuer": "https://token.actions.githubusercontent.com",
 #    "subject": "repo:'"https://github.com/kristofferandreasen/dotnet-file-service-api"':ref:refs/heads/main",
 #    "description": "GitHub Actions federated identity",
@@ -73,7 +73,7 @@ on:
       ENVIRONMENT_NAME:
         required: true
         type: string
-        default: 'Dev'
+        default: "Dev"
 
 permissions:
   id-token: write
