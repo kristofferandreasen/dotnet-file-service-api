@@ -31,7 +31,7 @@ name: Deploy Infrastructure Pipeline
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   workflow_dispatch:
 
 permissions:
@@ -46,6 +46,13 @@ jobs:
       ENVIRONMENT_NAME: Dev
     secrets: inherit
 
+  deploy-dev-apps:
+    name: Deploy to Dev
+    uses: ./.github/workflows/deploy_apps_template.yml
+    with:
+      ENVIRONMENT_NAME: Dev
+    secrets: inherit
+
   deploy-staging:
     name: Deploy to Staging
     needs: deploy-dev
@@ -54,10 +61,26 @@ jobs:
       ENVIRONMENT_NAME: Staging
     secrets: inherit
 
+  deploy-staging-apps:
+    name: Deploy to Staging
+    needs: deploy-dev
+    uses: ./.github/workflows/deploy_apps_template.yml
+    with:
+      ENVIRONMENT_NAME: Staging
+    secrets: inherit
+
   deploy-prod:
     name: Deploy to Prod
     needs: deploy-staging
     uses: ./.github/workflows/deploy_infrastructure_template.yml
+    with:
+      ENVIRONMENT_NAME: Prod
+    secrets: inherit
+
+  deploy-prod-apps:
+    name: Deploy to Prod
+    needs: deploy-staging
+    uses: ./.github/workflows/deploy_apps_template.yml
     with:
       ENVIRONMENT_NAME: Prod
     secrets: inherit
