@@ -71,7 +71,7 @@ jobs:
           ENVIRONMENT_NAME_UPPER=$(echo $ENVIRONMENT_NAME | tr '[:lower:]' '[:upper:]')
           echo "ENVIRONMENT_NAME=$ENVIRONMENT_NAME" >> $GITHUB_OUTPUT
           echo "ENVIRONMENT_NAME_UPPER=$ENVIRONMENT_NAME_UPPER" >> $GITHUB_OUTPUT
-          echo "WEB_APP_NAME=kadotnet${ENVIRONMENT_NAME,,}fileservice" >> $GITHUB_OUTPUT
+          echo "WEB_APP_NAME=kadotnet${ENVIRONMENT_NAME,,}file" >> $GITHUB_OUTPUT
 
       - name: Uninstall Azure CLI and install specific version
         shell: bash

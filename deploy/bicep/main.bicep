@@ -4,7 +4,7 @@ var location = 'swedencentral'
 var systemName = 'DotNetFileService'
 var companyAbbreviation = 'ka'
 var systemAbbreviation = 'dotnet'
-var serviceAbbreviation = 'fileservice'
+var serviceAbbreviation = 'file'
 
 ///////////////////////////////////////////////////////////////////////////////
 // Roles
