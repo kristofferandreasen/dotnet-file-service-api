@@ -7,9 +7,9 @@ param environmentName string = 'Dev'
 
 targetScope = 'subscription'
 
-var resourceGroupName = 'DotNetTemplate-API-${environmentName}'
+var resourceGroupName = 'DotNetFileService-API-${environmentName}'
 var location = 'swedencentral'
-var systemName = 'DotNetTemplate'
+var systemName = 'DotNetFileService'
 var serviceAbbreviation = 'api'
 
 var tags = {
@@ -17,9 +17,8 @@ var tags = {
   System: systemName
   Environment: environmentName
   Service: toUpper(serviceAbbreviation)
-  Source: 'https://github.com/kristofferandreasen/dotnet-api-template'
+  Source: 'https://github.com/kristofferandreasen/dotnet-file-service-api'
 }
-
 
 resource rg 'Microsoft.Resources/resourceGroups@2022-09-01' = {
   name: resourceGroupName
