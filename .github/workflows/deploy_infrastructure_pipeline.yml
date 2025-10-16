@@ -1,0 +1,63 @@
+#file: noinspection UndefinedAction,UndefinedParamsPresent
+
+# ------------------------------------------------------------------------------
+# 🚀 Deploy Infrastructure Pipeline
+#
+# This workflow orchestrates deployments across multiple environments:
+# Dev, Staging, and Prod.
+#
+# Trigger:
+# - Automatically triggers on push to the main branch.
+# - Can be manually triggered via workflow_dispatch.
+#
+# Jobs:
+# - deploy-dev: Deploys infrastructure to the Dev environment.
+# - deploy-staging: Deploys infrastructure to Staging and depends on Dev deployment.
+# - deploy-prod: Deploys infrastructure to Prod and depends on Staging deployment.
+#
+# Each job calls the reusable workflow defined in:
+#   .github/workflows/deploy_infrastructure_template.yml
+#
+# Inputs:
+# - ENVIRONMENT_NAME: passed to the reusable workflow to specify the target environment.
+#
+# Secrets:
+# - Secrets are inherited from the repository settings, including credentials and publish profiles.
+#
+# This structure ensures sequential deployments and clear separation between environments.
+# ------------------------------------------------------------------------------
+
+name: Deploy Infrastructure Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy-dev:
+    name: Deploy to Dev
+    uses: ./.github/workflows/deploy_infrastructure_template.yml
+    with:
+      ENVIRONMENT_NAME: Dev
+    secrets: inherit
+
+  deploy-staging:
+    name: Deploy to Staging
+    needs: deploy-dev
+    uses: ./.github/workflows/deploy_infrastructure_template.yml
+    with:
+      ENVIRONMENT_NAME: Staging
+    secrets: inherit
+
+  deploy-prod:
+    name: Deploy to Prod
+    needs: deploy-staging
+    uses: ./.github/workflows/deploy_infrastructure_template.yml
+    with:
+      ENVIRONMENT_NAME: Prod
+    secrets: inherit

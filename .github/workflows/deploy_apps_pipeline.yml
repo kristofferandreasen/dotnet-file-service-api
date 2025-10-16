@@ -1,0 +1,62 @@
+# ------------------------------------------------------------------------------
+# 🚀 Build, Test and Deploy Apps Pipeline
+#
+# This workflow manages the build, test, and deployment of applications
+# (Web App and Function App) across multiple environments: Dev, Staging, and Prod.
+#
+# Trigger:
+# - Automatically runs on push to the main branch.
+# - Can be manually triggered via workflow_dispatch.
+#
+# Jobs:
+# - deploy-dev: Builds, tests, and deploys apps to the Dev environment.
+# - deploy-staging: Deploys to Staging, depends on successful Dev deployment.
+# - deploy-prod: Deploys to Prod, depends on successful Staging deployment.
+#
+# Each job calls the reusable workflow defined in:
+#   .github/workflows/deploy_apps_template.yml
+#
+# Inputs:
+# - ENVIRONMENT_NAME: Specifies the target environment for the deployment.
+#
+# Secrets:
+# - Secrets are inherited from the repository and include environment-specific
+#   publish profiles for Azure Web App and Function App deployments.
+#
+# This setup ensures staged deployment with quality gates through build and test steps.
+# ------------------------------------------------------------------------------
+
+name: Build, Test and Deploy Apps Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy-dev:
+    name: Deploy to Dev
+    uses: ./.github/workflows/deploy_apps_template.yml
+    with:
+      ENVIRONMENT_NAME: Dev
+    secrets: inherit
+
+  deploy-staging:
+    name: Deploy to Staging
+    needs: deploy-dev
+    uses: ./.github/workflows/deploy_apps_template.yml
+    with:
+      ENVIRONMENT_NAME: Staging
+    secrets: inherit
+
+  deploy-prod:
+    name: Deploy to Prod
+    needs: deploy-staging
+    uses: ./.github/workflows/deploy_apps_template.yml
+    with:
+      ENVIRONMENT_NAME: Prod
+    secrets: inherit

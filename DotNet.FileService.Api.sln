@@ -17,10 +17,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "deployment", "deployment", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "deploy", "deploy", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 	ProjectSection(SolutionItems) = preProject
-		deployment\auth-utils.ps1 = deployment\auth-utils.ps1
-		deployment\create-swagger-registration.ps1 = deployment\create-swagger-registration.ps1
+		deploy\auth-utils.ps1 = deploy\auth-utils.ps1
+		deploy\create-swagger-registration.ps1 = deploy\create-swagger-registration.ps1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{AF75EA20-90CB-41AE-AAA4-0E0FA7BD174E}"
@@ -28,6 +28,26 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{6C025242-D91F-48EE-86D0-62078F3219EC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNet.FileService.Api.Client", "src\DotNet.FileService.Api.Client\DotNet.FileService.Api.Client.csproj", "{77A69DF0-2510-421D-B6E6-D237967E4B73}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{01620489-7378-4B98-8E4B-4F31B49B953E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{4F85C74A-5AC3-4D93-8A0C-A18A1CC2DDBA}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\deploy_apps_pipeline.yml = .github\workflows\deploy_apps_pipeline.yml
+		.github\workflows\deploy_apps_template.yml = .github\workflows\deploy_apps_template.yml
+		.github\workflows\deploy_infrastructure_pipeline.yml = .github\workflows\deploy_infrastructure_pipeline.yml
+		.github\workflows\deploy_infrastructure_template.yml = .github\workflows\deploy_infrastructure_template.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "bicep", "bicep", "{8A6B4245-ED79-43F2-A0DC-0E5A4E6C9C82}"
+	ProjectSection(SolutionItems) = preProject
+		main.bicep = main.bicep
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "modules", "modules", "{97C306F0-B32E-40D2-BC08-CFE63A7883A6}"
+	ProjectSection(SolutionItems) = preProject
+		createResourceGroup.bicep = createResourceGroup.bicep
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -60,6 +80,9 @@ Global
 		{2EE5D5FB-F02F-49BF-9344-0E5726ED99BB} = {AF75EA20-90CB-41AE-AAA4-0E0FA7BD174E}
 		{0F041DCC-936F-4EE9-AFBC-C3C76C6D0C0D} = {AF75EA20-90CB-41AE-AAA4-0E0FA7BD174E}
 		{77A69DF0-2510-421D-B6E6-D237967E4B73} = {AF75EA20-90CB-41AE-AAA4-0E0FA7BD174E}
+		{4F85C74A-5AC3-4D93-8A0C-A18A1CC2DDBA} = {01620489-7378-4B98-8E4B-4F31B49B953E}
+		{8A6B4245-ED79-43F2-A0DC-0E5A4E6C9C82} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{97C306F0-B32E-40D2-BC08-CFE63A7883A6} = {8A6B4245-ED79-43F2-A0DC-0E5A4E6C9C82}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3611093F-0390-4AA2-A142-7C1DF05A3853}

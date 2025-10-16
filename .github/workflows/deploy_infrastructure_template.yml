@@ -1,0 +1,134 @@
+#file: noinspection UndefinedParamsPresent
+
+# ------------------------------------------------------------------------------
+# ⚙️ Run Bicep Template and Deploy Infrastructure
+#
+# This workflow is designed as a reusable pipeline for deploying Azure infrastructure
+# using Bicep templates.
+#
+# Setup Notes:
+# - The service principal used must have the appropriate permissions configured.
+# - Initial setup includes:
+#   1. Adding a Federated Credential to the Azure AD App to enable GitHub Actions
+#      to authenticate without a password.
+#   2. Assigning the 'Contributor' role to the service principal on the target subscription.
+#   3. Granting the 'User Access Administrator' role to allow role assignments creation.
+#
+# Triggers:
+# - workflow_call: This is intended to be called by other workflows with
+#   the required ENVIRONMENT_NAME input.
+#
+# Inputs:
+# - ENVIRONMENT_NAME: Target environment (e.g., Dev, Staging, Prod) to deploy infrastructure.
+#
+# Jobs:
+# - deploy:
+#   - Checks out the repository code.
+#   - Sets environment variables based on the input.
+#   - Ensures Azure CLI version 2.72.0 is installed.
+#   - Logs into Azure using service principal credentials stored in secrets.
+#   - Creates the resource group for the specified environment via a Bicep module.
+#   - Deploys the main Bicep template to the resource group.
+#
+# Secrets Required:
+# - AZURE_CLIENT_ID: Service principal client ID.
+# - AZURE_TENANT_ID: Azure AD tenant ID.
+# - AZURE_SUBSCRIPTION_ID: Azure subscription ID.
+#
+# The deployment is scoped to the resource group and location 'swedencentral'.
+# ------------------------------------------------------------------------------
+
+# These initial scripts adds the correct rights for the
+# service principal to execute the scripts towards Azure.
+
+# The Portal version can be found in the Entra (Azure AD)
+# under Certificates and Secrets - Federated credentials.
+
+# Add Federated Credential (for subscription id)
+#  az ad app federated-credential create --id 9c16951b-357c-4f25-8695-641d6b5cb19c --parameters '{
+#    "name": "github-actions-deploy",
+#    "issuer": "https://token.actions.githubusercontent.com",
+#    "subject": "repo:'"https://github.com/kristofferandreasen/dotnet-file-service-api"':ref:refs/heads/main",
+#    "description": "GitHub Actions federated identity",
+#    "audiences": ["api://AzureADTokenExchange"]
+#  }'
+
+# Add the correct role to the service principal
+# az role assignment create
+#  --assignee 9c16951b-357c-4f25-8695-641d6b5cb19c
+#  --role Contributor --subscription 91c9ad9a-ce74-4e66-a9f4-30b2f2f0519f
+#  --scope /subscriptions/91c9ad9a-ce74-4e66-a9f4-30b2f2f0519f
+
+# Grant service principal access to create role assignments
+#  az role assignment create \
+#   --assignee 9c16951b-357c-4f25-8695-641d6b5cb19c \
+#   --role "User Access Administrator" \
+#   --scope /subscriptions/91c9ad9a-ce74-4e66-a9f4-30b2f2f0519f
+
+name: Run Bicep template and deploy infrastructure
+
+on:
+  workflow_call: # Required for reusable workflows
+    inputs:
+      ENVIRONMENT_NAME:
+        required: true
+        type: string
+        default: 'Dev'
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    # Set GitHub environment
+    # Used to set guards for the different environments
+    # The environment can be readded if needed.
+    # It should be added if a guard needs to take effect regarding deployment.
+    # environment: ${{ inputs.ENVIRONMENT_NAME }}
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      # vars can only be defined in a single step
+      - name: Set environment variables
+        id: vars
+        run: |
+          ENVIRONMENT_NAME="${{ inputs.ENVIRONMENT_NAME != '' && inputs.ENVIRONMENT_NAME || 'Dev' }}"
+          echo "ENVIRONMENT_NAME=$ENVIRONMENT_NAME" >> $GITHUB_OUTPUT
+          echo "RESOURCE_GROUP=DotNetTemplate-API-$ENVIRONMENT_NAME" >> $GITHUB_OUTPUT
+
+      - name: Uninstall Azure CLI and install specific version
+        shell: bash
+        run: |
+          brew uninstall azure-cli || true
+          pip3 install azure-cli==2.72.0
+
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          enable-AzPSSession: true
+
+      - name: Create Resource Group With AZ CLI
+        run: |
+          az deployment sub create \
+            --location swedencentral \
+            --template-file ./deploy/bicep/modules/createResourceGroup.bicep \
+            --parameters environmentName=${{ steps.vars.outputs.ENVIRONMENT_NAME }} \
+            --only-show-errors \
+            --output none
+
+      - name: Deploy Bicep
+        uses: azure/arm-deploy@v1
+        with:
+          scope: resourcegroup
+          region: swedencentral
+          resourceGroupName: ${{ steps.vars.outputs.RESOURCE_GROUP }}
+          template: ./deploy/bicep/main.bicep
+          parameters: environmentName=${{ steps.vars.outputs.ENVIRONMENT_NAME }}

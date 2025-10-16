@@ -1,0 +1,96 @@
+# ------------------------------------------------------------------------------
+# 📄 Publish Profile Secrets
+#
+# For each environment (Dev, Staging, Prod), the publish profiles were downloaded
+# from the Azure Portal and added as GitHub repository secrets.
+#
+# 1. Go to the Azure Portal
+# 2. Navigate to your App Service (Web App or Function App)
+# 3. Under "Deployment Center" → "FTPS Credentials" → click "Get publish profile"
+# 4. Save the downloaded `.PublishSettings` file
+# 5. Open the file in a text editor and copy its full contents
+# 6. Go to your GitHub repository → Settings → Secrets and variables → Actions → New repository secret
+# 7. Add a new secret for each environment:
+#
+#    AZURE_WEBAPP_PUBLISH_PROFILE_DEV
+#    AZURE_WEBAPP_PUBLISH_PROFILE_STAGING
+#    AZURE_WEBAPP_PUBLISH_PROFILE_PROD
+#
+# ⚠️ These secrets must match the environment suffix used in your workflow logic.
+# ------------------------------------------------------------------------------
+
+name: Build, Test and Deploy Web App and Function App
+
+on:
+  workflow_call:
+    inputs:
+      ENVIRONMENT_NAME:
+        required: true
+        type: string
+        default: 'Dev'
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    # Set GitHub environment
+    # Used to set guards for the different environments
+    # The environment can be readded if needed.
+    # It should be added if a guard needs to take effect regarding deployment.
+    # environment: ${{ inputs.ENVIRONMENT_NAME }}
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --no-restore
+
+      - name: Test
+        run: dotnet test --no-build --verbosity normal
+
+      - name: Publish WebApp project
+        run: dotnet publish ./src/DotNet.FileService.Api/DotNet.FileService.Api.csproj -c Release -o ./publish_webapp
+
+      - name: Set environment variables
+        id: vars
+        run: |
+          ENVIRONMENT_NAME="${{ inputs.ENVIRONMENT_NAME != '' && inputs.ENVIRONMENT_NAME || 'Dev' }}"
+          ENVIRONMENT_NAME_UPPER=$(echo $ENVIRONMENT_NAME | tr '[:lower:]' '[:upper:]')
+          echo "ENVIRONMENT_NAME=$ENVIRONMENT_NAME" >> $GITHUB_OUTPUT
+          echo "ENVIRONMENT_NAME_UPPER=$ENVIRONMENT_NAME_UPPER" >> $GITHUB_OUTPUT
+          echo "WEB_APP_NAME=kadotnet${ENVIRONMENT_NAME,,}api" >> $GITHUB_OUTPUT
+
+      - name: Uninstall Azure CLI and install specific version
+        shell: bash
+        run: |
+          brew uninstall azure-cli || true
+          pip3 install azure-cli==2.72.0
+
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          enable-AzPSSession: true
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ steps.vars.outputs.WEB_APP_NAME }}
+          slot-name: 'production'
+          publish-profile: ${{ secrets[format('AZURE_WEBAPP_PUBLISH_PROFILE_%s', steps.vars.outputs.ENVIRONMENT_NAME_UPPER)] }}
+          package: './publish_webapp'
