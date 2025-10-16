@@ -4,7 +4,7 @@ var location = 'swedencentral'
 var systemName = 'DotNetFileService'
 var companyAbbreviation = 'ka'
 var systemAbbreviation = 'dotnet'
-var serviceAbbreviation = 'file-service'
+var serviceAbbreviation = 'fileservice'
 
 ///////////////////////////////////////////////////////////////////////////////
 // Roles
@@ -29,7 +29,7 @@ var resourceName = '${companyAbbreviation}${systemAbbreviation}${toLower(environ
 // a specific user in Azure.
 ///////////////////////////////////////////////////////////////////////////////
 var devIds = [
-    '97e5cd6d-1e43-4894-bdd9-cd7e4ce528fb' // dotnet-developers Azure AD group
+  '97e5cd6d-1e43-4894-bdd9-cd7e4ce528fb' // dotnet-developers Azure AD group
 ]
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -42,7 +42,7 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2021-06
   properties: {
     retentionInDays: 30
     sku: {
-      name: 'PerGB2018'  // Common SKU for Log Analytics workspace
+      name: 'PerGB2018' // Common SKU for Log Analytics workspace
     }
   }
   tags: tags
@@ -153,8 +153,8 @@ resource webApplication 'Microsoft.Web/sites@2022-03-01' = {
           value: environmentName
         }
         {
-            name: 'ASPNETCORE_ENVIRONMENT'
-            value: aspnetEnv
+          name: 'ASPNETCORE_ENVIRONMENT'
+          value: aspnetEnv
         }
         {
           name: 'WEBSITE_RUN_FROM_PACKAGE'
@@ -171,8 +171,8 @@ resource storageRoleAuthorizationApi 'Microsoft.Authorization/roleAssignments@20
   name: guid('storage-rbac', storageAccount.id, resourceGroup().id, webApplication.id, contributerRoleId)
   scope: storageAccount
   properties: {
-      principalId: webApplication.identity.principalId
-      roleDefinitionId: resourceId('Microsoft.Authorization/roleDefinitions', contributerRoleId)
+    principalId: webApplication.identity.principalId
+    roleDefinitionId: resourceId('Microsoft.Authorization/roleDefinitions', contributerRoleId)
   }
 }
 
@@ -194,18 +194,21 @@ var devKeyVaultAccess = [
   }
 ]
 
-var keyVaultAccessPolicies = union([
-  {
-    tenantId: tenant().tenantId
-    objectId: webApplication.identity.principalId
-    permissions: {
-      secrets: [
-        'list'
-        'get'
-      ]
+var keyVaultAccessPolicies = union(
+  [
+    {
+      tenantId: tenant().tenantId
+      objectId: webApplication.identity.principalId
+      permissions: {
+        secrets: [
+          'list'
+          'get'
+        ]
+      }
     }
-  }
-], devKeyVaultAccess)
+  ],
+  devKeyVaultAccess
+)
 
 resource keyVaultAccess 'Microsoft.KeyVault/vaults/accessPolicies@2021-10-01' = {
   name: 'replace'
