@@ -108,7 +108,7 @@
 name: Run Bicep template and deploy infrastructure
 
 on:
-  workflow_call: # Required for reusable workflows
+  workflow_call:
     inputs:
       ENVIRONMENT_NAME:
         required: true
