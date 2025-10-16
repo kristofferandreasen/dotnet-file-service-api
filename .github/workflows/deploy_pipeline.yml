@@ -40,21 +40,21 @@ permissions:
 
 jobs:
   deploy-dev:
-    name: Deploy to Dev
+    name: Deploy Infrastructure to Dev
     uses: ./.github/workflows/deploy_infrastructure_template.yml
     with:
       ENVIRONMENT_NAME: Dev
     secrets: inherit
 
   deploy-dev-apps:
-    name: Deploy to Dev
+    name: Deploy Apps to Dev
     uses: ./.github/workflows/deploy_apps_template.yml
     with:
       ENVIRONMENT_NAME: Dev
     secrets: inherit
 
   deploy-staging:
-    name: Deploy to Staging
+    name: Deploy Infrastructure to Staging
     needs: deploy-dev
     uses: ./.github/workflows/deploy_infrastructure_template.yml
     with:
@@ -62,7 +62,7 @@ jobs:
     secrets: inherit
 
   deploy-staging-apps:
-    name: Deploy to Staging
+    name: Deploy Apps to Staging
     needs: deploy-dev
     uses: ./.github/workflows/deploy_apps_template.yml
     with:
@@ -70,7 +70,7 @@ jobs:
     secrets: inherit
 
   deploy-prod:
-    name: Deploy to Prod
+    name: Deploy Infrastructure to Prod
     needs: deploy-staging
     uses: ./.github/workflows/deploy_infrastructure_template.yml
     with:
@@ -78,7 +78,7 @@ jobs:
     secrets: inherit
 
   deploy-prod-apps:
-    name: Deploy to Prod
+    name: Deploy Apps to Prod
     needs: deploy-staging
     uses: ./.github/workflows/deploy_apps_template.yml
     with:
