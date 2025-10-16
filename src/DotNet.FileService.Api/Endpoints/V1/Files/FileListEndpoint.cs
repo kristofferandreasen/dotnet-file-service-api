@@ -20,7 +20,7 @@ public static class FileListEndpoint
     public static void MapFileListEndpoint(this IEndpointRouteBuilder app)
     {
         app.MapGet(EndpointRoute, HandleListFiles)
-            .RequireAuthorization(RoleConstants.BlobReader)
+            .RequireAuthorization(PolicyConstants.BlobReadAccess)
             .WithName(EndpointName)
             .WithTags(OpenApiConstants.FilesTag)
             .WithSummary(EndpointSummary)

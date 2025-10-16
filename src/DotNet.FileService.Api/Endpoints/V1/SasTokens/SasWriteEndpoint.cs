@@ -21,7 +21,7 @@ public static class SasWriteEndpoint
     public static void MapSasWriteEndpoint(this IEndpointRouteBuilder app)
     {
         app.MapGet(EndpointRoute, HandleSasWriteAsync)
-            .RequireAuthorization(RoleConstants.SasTokenWriter)
+            .RequireAuthorization(PolicyConstants.SasTokenWriteAccess)
             .WithName(EndpointName)
             .WithTags(OpenApiConstants.SasTokenTag)
             .WithSummary(EndpointSummary)

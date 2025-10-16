@@ -20,7 +20,7 @@ public static class UploadEndpoint
     public static void MapUploadEndpoint(this IEndpointRouteBuilder app)
     {
         app.MapPost(EndpointRoute, HandleUploadAsync)
-            .RequireAuthorization(RoleConstants.BlobWriter)
+            .RequireAuthorization(PolicyConstants.BlobWriteAccess)
             .WithName(EndpointName)
             .WithTags(OpenApiConstants.FilesTag)
             .WithSummary(EndpointSummary)

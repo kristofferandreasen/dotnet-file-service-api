@@ -21,7 +21,7 @@ public static class SasReadEndpoint
     public static void MapSasReadEndpoint(this IEndpointRouteBuilder app)
     {
         app.MapGet(EndpointRoute, HandleSasReadAsync)
-            .RequireAuthorization(RoleConstants.SasTokenReader)
+            .RequireAuthorization(PolicyConstants.SasTokenReadAccess)
             .WithName(EndpointName)
             .WithTags(OpenApiConstants.SasTokenTag)
             .WithSummary(EndpointSummary)

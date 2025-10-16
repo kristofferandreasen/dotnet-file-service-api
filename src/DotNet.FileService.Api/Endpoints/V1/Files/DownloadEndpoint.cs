@@ -21,7 +21,7 @@ public static class DownloadEndpoint
     public static void MapDownloadEndpoint(this IEndpointRouteBuilder app)
     {
         app.MapGet(EndpointRoute, HandleDownloadAsync)
-            .RequireAuthorization(RoleConstants.BlobReader)
+            .RequireAuthorization(PolicyConstants.BlobReadAccess)
             .WithName(EndpointName)
             .WithTags(OpenApiConstants.FilesTag)
             .WithSummary(EndpointSummary)
