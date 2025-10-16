@@ -8,7 +8,7 @@ namespace DotNet.FileService.Api.Endpoints.V1.Files;
 public static class UploadEndpoint
 {
     private const string EndpointName = "UploadFile";
-    private const string EndpointRoute = "v1/upload";
+    private const string EndpointRoute = "v1/files/upload";
     private const string EndpointSummary = "Uploads a file to Azure Blob Storage.";
     private const string EndpointDescription =
         "Accepts a multipart/form-data request containing a file and uploads it to Azure Blob Storage. " +

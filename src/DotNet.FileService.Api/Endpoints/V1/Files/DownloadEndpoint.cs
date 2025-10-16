@@ -10,7 +10,7 @@ namespace DotNet.FileService.Api.Endpoints.V1.Files;
 public static class DownloadEndpoint
 {
     private const string EndpointName = "DownloadFile";
-    private const string EndpointRoute = "v1/download/{fileName}";
+    private const string EndpointRoute = "v1/files/download/{fileName}";
     private const string EndpointSummary = "Downloads a file from Azure Blob Storage.";
     private const string EndpointDescription =
         "Retrieves a file by name from the configured Azure Blob Storage container. " +
