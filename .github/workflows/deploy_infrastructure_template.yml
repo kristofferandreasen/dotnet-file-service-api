@@ -139,7 +139,7 @@ jobs:
         run: |
           ENVIRONMENT_NAME="${{ inputs.ENVIRONMENT_NAME != '' && inputs.ENVIRONMENT_NAME || 'Dev' }}"
           echo "ENVIRONMENT_NAME=$ENVIRONMENT_NAME" >> $GITHUB_OUTPUT
-          echo "RESOURCE_GROUP=DotNetTemplate-API-$ENVIRONMENT_NAME" >> $GITHUB_OUTPUT
+          echo "RESOURCE_GROUP=DotNetFileService-API-$ENVIRONMENT_NAME" >> $GITHUB_OUTPUT
 
       - name: Uninstall Azure CLI and install specific version
         shell: bash
