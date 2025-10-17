@@ -79,9 +79,6 @@ if (app.Environment.IsDevelopment())
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapGet("/swagger/{**any}", (string any) => Results.NotFound())
-   .AllowAnonymous();
-
 // Public health check (no auth)
 app.MapGet("/health", () => Results.Ok("OK"))
    .AllowAnonymous();
