@@ -63,7 +63,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-        c.OAuthClientId(builder.Configuration["AzureAd:SwaggerClientId"]);
+        c.OAuthClientId(azureAdOptions.SwaggerClientId);
         c.OAuthUsePkce();
         c.OAuthScopeSeparator(" ");
         c.OAuthAppName("File Service API - Swagger");
@@ -72,7 +72,8 @@ if (app.Environment.IsDevelopment())
 
 // Redirect root path to Swagger page
 app.MapGet("/", context => Task.Run(()
-    => context.Response.Redirect("/swagger/index.html")));
+    => context.Response.Redirect("/swagger/index.html")))
+    .AllowAnonymous();
 
 // Public health check (no auth)
 app.MapGet("/health", () => Results.Ok("OK"))
