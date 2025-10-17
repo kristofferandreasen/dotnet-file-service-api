@@ -70,9 +70,12 @@ if (app.Environment.IsDevelopment())
     });
 
     // Redirect root path to Swagger page
-    app.MapGet("/", context => Task.Run(()
-        => context.Response.Redirect("/swagger/index.html")))
-        .AllowAnonymous();
+    app.MapGet("/", context =>
+    {
+        context.Response.Redirect("/swagger/index.html");
+        return Task.CompletedTask;
+    })
+    .AllowAnonymous();
 }
 
 // Public health check (no auth)
