@@ -35,6 +35,7 @@ public static class SecurityExtensions
             .AddMicrosoftIdentityWebApi(
                 bearerOptions =>
                 {
+                    // Should be listed here without scope (.default)
                     bearerOptions.Audience = azureAdOptions.Audience;
                 },
                 identityOptions =>
