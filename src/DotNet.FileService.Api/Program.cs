@@ -53,8 +53,6 @@ builder.Services.AddSingleton<ISasTokenService>(
 var app = builder.Build();
 
 app.UseHttpsRedirection();
-app.UseAuthentication();
-app.UseAuthorization();
 
 app.UseExceptionHandler();
 app.UseStatusCodePages();
@@ -75,9 +73,14 @@ if (app.Environment.IsDevelopment())
     {
         context.Response.Redirect("/swagger/index.html");
         return Task.CompletedTask;
-    })
-    .AllowAnonymous();
+    });
 }
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapGet("/swagger/{**any}", (string any) => Results.NotFound())
+   .AllowAnonymous();
 
 // Public health check (no auth)
 app.MapGet("/health", () => Results.Ok("OK"))

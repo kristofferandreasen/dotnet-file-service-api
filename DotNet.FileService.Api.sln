@@ -41,12 +41,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "bicep", "bicep", "{8A6B4245-ED79-43F2-A0DC-0E5A4E6C9C82}"
 	ProjectSection(SolutionItems) = preProject
-		main.bicep = main.bicep
+		deploy\bicep\main.bicep = deploy\bicep\main.bicep
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "modules", "modules", "{97C306F0-B32E-40D2-BC08-CFE63A7883A6}"
 	ProjectSection(SolutionItems) = preProject
-		createResourceGroup.bicep = createResourceGroup.bicep
+		deploy\bicep\modules\createResourceGroup.bicep = deploy\bicep\modules\createResourceGroup.bicep
 	EndProjectSection
 EndProject
 Global
