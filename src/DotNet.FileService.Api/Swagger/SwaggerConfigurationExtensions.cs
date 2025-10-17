@@ -41,7 +41,7 @@ public static class SwaggerConfigurationExtensions
                         TokenUrl = new Uri($"{azureAdOptions.Instance}{azureAdOptions.TenantId}/oauth2/v2.0/token"),
                         Scopes = new Dictionary<string, string>
                         {
-                            { $"api://{azureAdOptions.Audience}/.default", "Access the File Service API" },
+                           { azureAdOptions.Audience, "Access the File Service API" },
                         },
                     },
                 },
@@ -60,7 +60,7 @@ public static class SwaggerConfigurationExtensions
                             Id = "oauth2",
                         },
                     },
-                    new[] { $"api://{azureAdOptions.Audience}/.default" }
+                    new[] { azureAdOptions.Audience }
                 },
             });
         });
