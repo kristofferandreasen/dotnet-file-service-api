@@ -15,7 +15,7 @@ param (
 
 # MANUAL CONFIGURATION NEEDED HERE
 $appRegistrationId = "app://kristofferaandreasengmail.onmicrosoft.com/" + $environmentName.ToLower() + "/dotnet-fileservice-api"
-$appRegistrationName = "DotNet-" + $environmentName + "FileService-Api-Swagger"
+$appRegistrationName = "DotNet-" + $environmentName + "-FileService-Api-Swagger"
 $redirectUri = "https://kadotnet$($environmentName.ToLower())file.azurewebsites.net/swagger/oauth2-redirect.html"
 
 Write-Host "`n**************************************************" -ForegroundColor White
