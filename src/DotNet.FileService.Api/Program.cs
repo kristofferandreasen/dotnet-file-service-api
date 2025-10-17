@@ -27,11 +27,12 @@ var serviceOptions = builder.Configuration
     .Get<ServiceOptions>()!;
 
 builder.Services.ConfigureMicrosoftSecurity(azureAdOptions);
-
 builder.Services.AddAuthorization();
+
 builder.Services.AddConfiguredSwagger(azureAdOptions);
 builder.Services.AddProblemDetails();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddHealthChecks();
 
 builder.Services.AddAuthorizationBuilder()
     .AddPolicy(PolicyConstants.BlobReadAccess, policy => policy.RequireRole(RoleConstants.BlobReader))
