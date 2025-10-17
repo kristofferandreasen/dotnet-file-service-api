@@ -1,6 +1,4 @@
-using DotNet.Api.Template.Domain.AzureCredentials;
-using DotNet.Api.Template.Domain.Configuration;
-using DotNet.Api.Template.Domain.Options;
+using DotNet.FileService.Api.Infrastructure.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Identity.Web;
@@ -13,13 +11,13 @@ public static class SecurityExtensions
     /// Configures Microsoft identity authentication and role-based authorization using settings from configuration.
     /// </summary>
     /// <param name="services">The service collection to configure.</param>
-    /// <param name="configuration">The application configuration.</param>
+    /// <param name="azureAdOptions">The application configuration.</param>
     /// <returns>The updated <see cref="IServiceCollection" />.</returns>
     public static IServiceCollection ConfigureMicrosoftSecurity(
         this IServiceCollection services,
-        IConfiguration configuration)
+        AzureAdOptions azureAdOptions)
     {
-        AddMicrosoftAuthentication(services, configuration.GetOptions<EnvironmentOptions>());
+        AddMicrosoftAuthentication(services, azureAdOptions);
         ConfigureAuthorizationPolicies(services);
 
         return services;
@@ -29,21 +27,21 @@ public static class SecurityExtensions
     /// Adds JWT bearer authentication using Microsoft identity platform, configured with environment-specific settings.
     /// </summary>
     /// <param name="services">The service collection to modify.</param>
-    /// <param name="environmentOptions">The environment-specific options used to configure authentication.</param>
+    /// <param name="azureAdOptions">The environment-specific options used to configure authentication.</param>
     private static void AddMicrosoftAuthentication(
         IServiceCollection services,
-        EnvironmentOptions environmentOptions) =>
+        AzureAdOptions azureAdOptions) =>
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddMicrosoftIdentityWebApi(
                 bearerOptions =>
                 {
-                    bearerOptions.Audience = environmentOptions.GetAudience();
+                    bearerOptions.Audience = azureAdOptions.Audience;
                 },
                 identityOptions =>
                 {
-                    identityOptions.TenantId = TokenCredentialFactory.AzureTenantId;
-                    identityOptions.Instance = TokenCredentialFactory.Instance;
-                    identityOptions.ClientId = environmentOptions.GetAppRegistrationClientId();
+                    identityOptions.TenantId = azureAdOptions.TenantId;
+                    identityOptions.Instance = azureAdOptions.Instance;
+                    identityOptions.ClientId = azureAdOptions.ClientId;
                 });
 
     /// <summary>
@@ -54,6 +52,6 @@ public static class SecurityExtensions
         => services.AddAuthorizationBuilder()
             .SetFallbackPolicy(new AuthorizationPolicyBuilder()
                 .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
-                .RequireRole(ExecuteAllRole)
+                .RequireRole(RoleConstants.BlobWriter)
                 .Build());
 }

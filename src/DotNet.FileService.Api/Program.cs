@@ -26,13 +26,7 @@ var serviceOptions = builder.Configuration
     .GetSection(ServiceOptions.SectionName)
     .Get<ServiceOptions>()!;
 
-builder.Services.AddAuthentication("Bearer")
-    .AddJwtBearer("Bearer", options =>
-    {
-        options.Authority = "https://your-auth-server";
-        options.Audience = "file-api";
-        options.RequireHttpsMetadata = true;
-    });
+builder.Services.ConfigureMicrosoftSecurity(azureAdOptions);
 
 builder.Services.AddAuthorization();
 builder.Services.AddConfiguredSwagger(azureAdOptions);
