@@ -1,0 +1,46 @@
+[
+    {
+        "allowedMemberTypes": [
+            "User",
+            "Application"
+        ],
+        "displayName": "Blob Reader",
+        "description": "Allows reading files from Blob storage",
+        "isEnabled": true,
+        "value": "BlobReader",
+        "id": "00000000-0000-0000-0000-000000000001"
+    },
+    {
+        "allowedMemberTypes": [
+            "User",
+            "Application"
+        ],
+        "displayName": "Blob Writer",
+        "description": "Allows writing files to Blob storage",
+        "isEnabled": true,
+        "value": "BlobWriter",
+        "id": "00000000-0000-0000-0000-000000000002"
+    },
+    {
+        "allowedMemberTypes": [
+            "User",
+            "Application"
+        ],
+        "displayName": "SAS Token Reader",
+        "description": "Allows generating SAS tokens for reading",
+        "isEnabled": true,
+        "value": "SasTokenReader",
+        "id": "00000000-0000-0000-0000-000000000003"
+    },
+    {
+        "allowedMemberTypes": [
+            "User",
+            "Application"
+        ],
+        "displayName": "SAS Token Writer",
+        "description": "Allows generating SAS tokens for writing",
+        "isEnabled": true,
+        "value": "SasTokenWriter",
+        "id": "00000000-0000-0000-0000-000000000004"
+    }
+]

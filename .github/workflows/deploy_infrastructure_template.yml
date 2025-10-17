@@ -7,12 +7,7 @@
 # using Bicep templates.
 #
 # Setup Notes:
-# - The service principal used must have the appropriate permissions configured.
-# - Initial setup includes:
-#   1. Adding a Federated Credential to the Azure AD App to enable GitHub Actions
-#      to authenticate without a password.
-#   2. Assigning the 'Contributor' role to the service principal on the target subscription.
-#   3. Granting the 'User Access Administrator' role to allow role assignments creation.
+# - The service principal used must have the appropriate permissions configured. Check README.MD:
 #
 # Triggers:
 # - workflow_call: This is intended to be called by other workflows with
@@ -21,89 +16,7 @@
 # Inputs:
 # - ENVIRONMENT_NAME: Target environment (e.g., Dev, Staging, Prod) to deploy infrastructure.
 #
-# Jobs:
-# - deploy:
-#   - Checks out the repository code.
-#   - Sets environment variables based on the input.
-#   - Ensures Azure CLI version 2.72.0 is installed.
-#   - Logs into Azure using service principal credentials stored in secrets.
-#   - Creates the resource group for the specified environment via a Bicep module.
-#   - Deploys the main Bicep template to the resource group.
-#
-# Secrets Required:
-# - AZURE_CLIENT_ID: Service principal client ID.
-# - AZURE_TENANT_ID: Azure AD tenant ID.
-# - AZURE_SUBSCRIPTION_ID: Azure subscription ID.
-#
-# The deployment is scoped to the resource group and location 'swedencentral'.
-# ------------------------------------------------------------------------------
-
-# These initial scripts adds the correct rights for the
-# service principal to execute the scripts towards Azure.
-
-# --------------------------------------------------------------------------------
-# STEP 1: Create an Azure AD App Registration
-#
-# This app registration represents the GitHub Actions workflow in Azure AD.
-# It allows GitHub to authenticate to Azure using OpenID Connect (OIDC),
-# without needing any stored client secrets.
-#
-# You can create the app registration in the Azure Portal or via CLI:
-#   az ad app create --display-name "github-actions-file-service-api"
-#
-# Note the Application (client) ID from the created app — it will be used below.
-# --------------------------------------------------------------------------------
-
-# --------------------------------------------------------------------------------
-# STEP 2: Add Federated Credential to the App Registration
-#
-# This step links your GitHub repository and branch to the Azure AD App Registration,
-# enabling GitHub Actions to authenticate to Azure using OpenID Connect (OIDC)
-# without requiring any stored secrets.
-#
-# Note:
-# - The value provided to '--id' must be the **Application (client) ID**
-#   of the Azure AD App Registration created in Step 1.
-# - The 'subject' field identifies which GitHub repo and branch
-#   are allowed to request tokens from Azure.
-# --------------------------------------------------------------------------------
-
-# az ad app federated-credential create --id 9c16951b-357c-4f25-8695-641d6b5cb19c --parameters '{
-#   "name": "github-actions-deploy-file-service-api",
-#   "issuer": "https://token.actions.githubusercontent.com",
-#   "subject": "repo:kristofferandreasen/dotnet-file-service-api:ref:refs/heads/main",
-#   "description": "GitHub Actions federated identity",
-#   "audiences": ["api://AzureADTokenExchange"]
-# }'
-
-# Add the correct role to the service principal
-# az role assignment create
-#  --assignee 9c16951b-357c-4f25-8695-641d6b5cb19c
-#  --role Contributor --subscription 91c9ad9a-ce74-4e66-a9f4-30b2f2f0519f
-#  --scope /subscriptions/91c9ad9a-ce74-4e66-a9f4-30b2f2f0519f
-
-# Grant service principal access to create role assignments
-#  az role assignment create \
-#   --assignee 9c16951b-357c-4f25-8695-641d6b5cb19c \
-#   --role "User Access Administrator" \
-#   --scope /subscriptions/91c9ad9a-ce74-4e66-a9f4-30b2f2f0519f
-
-# --------------------------------------------------------------------------------
-# STEP 3: Configure GitHub Actions Secrets
-#
-# After creating the App Registration and adding the federated credential,
-# store the following values as **GitHub Actions Secrets** in your repository:
-#
-#   AZURE_TENANT_ID       = <Your Azure Directory (tenant) ID>
-#   AZURE_SUBSCRIPTION_ID = <Your Azure Subscription ID>
-#   AZURE_CLIENT_ID       = <Your App Registration’s Application (client) ID>
-#
-# You can set these secrets in GitHub by navigating to:
-#   Repository Settings → Secrets and variables → Actions → New repository secret
-#
-# These secrets are used by the GitHub Actions workflow to authenticate
-# to Azure using the federated identity you configured above.
-# --------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 
 name: Run Bicep template and deploy infrastructure
 

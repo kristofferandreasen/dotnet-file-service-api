@@ -10,11 +10,6 @@
 # - Automatically triggers on push to the main branch.
 # - Can be manually triggered via workflow_dispatch.
 #
-# Jobs:
-# - deploy-dev: Deploys infrastructure to the Dev environment.
-# - deploy-staging: Deploys infrastructure to Staging and depends on Dev deployment.
-# - deploy-prod: Deploys infrastructure to Prod and depends on Staging deployment.
-#
 # Each job calls the reusable workflow defined in:
 #   .github/workflows/deploy_infrastructure_template.yml
 #
@@ -39,7 +34,7 @@ permissions:
   contents: read
 
 jobs:
-  deploy-dev:
+  deploy-dev-infrastructure:
     name: Deploy Infrastructure to Dev
     uses: ./.github/workflows/deploy_infrastructure_template.yml
     with:
@@ -48,13 +43,13 @@ jobs:
 
   deploy-dev-apps:
     name: Deploy Apps to Dev
-    needs: deploy-dev
+    needs: deploy-dev-infrastructure
     uses: ./.github/workflows/deploy_apps_template.yml
     with:
       ENVIRONMENT_NAME: Dev
     secrets: inherit
 
-  deploy-staging:
+  deploy-staging-infrastructure:
     name: Deploy Infrastructure to Staging
     needs: deploy-dev-apps
     uses: ./.github/workflows/deploy_infrastructure_template.yml
@@ -64,13 +59,13 @@ jobs:
 
   deploy-staging-apps:
     name: Deploy Apps to Staging
-    needs: deploy-staging
+    needs: deploy-staging-infrastructure
     uses: ./.github/workflows/deploy_apps_template.yml
     with:
       ENVIRONMENT_NAME: Staging
     secrets: inherit
 
-  deploy-prod:
+  deploy-prod-infrastructure:
     name: Deploy Infrastructure to Prod
     needs: deploy-staging-apps
     uses: ./.github/workflows/deploy_infrastructure_template.yml
@@ -80,7 +75,7 @@ jobs:
 
   deploy-prod-apps:
     name: Deploy Apps to Prod
-    needs: deploy-prod
+    needs: deploy-prod-infrastructure
     uses: ./.github/workflows/deploy_apps_template.yml
     with:
       ENVIRONMENT_NAME: Prod

@@ -12,8 +12,11 @@ param (
 # The correct naming standard for the application should be used in production apps
 # The private tenant is only used to avoid issues in test / dev apps
 # $appRegistrationId = "app://dotnet-template.com/" + $environmentName.ToLower() + "/api"
-$appRegistrationId = "app://some-name.onmicrosoft.com/" + $environmentName.ToLower() + "/dotnet-api"
-$appRegistrationName = "DotNet-" + $environmentName + "-Api-Swagger"
+
+# MANUAL CONFIGURATION NEEDED HERE
+$appRegistrationId = "app://kristofferaandreasengmail.onmicrosoft.com/" + $environmentName.ToLower() + "/dotnet-fileservice-api"
+$appRegistrationName = "DotNet-" + $environmentName + "FileService-Api-Swagger"
+$redirectUri = "https://kadotnet$($environmentName.ToLower())file.azurewebsites.net/swagger/oauth2-redirect.html"
 
 Write-Host "`n**************************************************" -ForegroundColor White
 Write-Host "* Environment Name              : $environmentName" -ForegroundColor White
@@ -30,7 +33,6 @@ $appId = az ad app list `
 Write-Host "AppId: $appId"
 
 Write-Host "Creating new app registration"
-$redirectUri = "https://kadotnet$($environmentName.ToLower() )api.azurewebsites.net/swagger/oauth2-redirect.html"
 $clientId = az ad app create `
   --display-name $appRegistrationName `
   --sign-in-audience 'AzureADMyOrg' `
@@ -47,15 +49,13 @@ $swaggerAppObjectId = az ad app show `
   --output tsv
 
 # Prepare redirectUris array based on environment
-if ($environmentName -ne "Prod")
-{
+if ($environmentName -ne "Prod") {
   $redirectUris = @(
     $redirectUri
     "https://localhost:8080/swagger/oauth2-redirect.html"
   )
 }
-else
-{
+else {
   $redirectUris = @($redirectUri)
 }
 
