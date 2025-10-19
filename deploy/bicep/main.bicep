@@ -180,7 +180,7 @@ resource webApplication 'Microsoft.Web/sites@2022-03-01' = {
         }
         {
           name: 'AzureAd__Audience'
-          value: 'app://kristofferaandreasengmail.onmicrosoft.com/dev/dotnet-fileservice-api'
+          value: 'app://kristofferaandreasengmail.onmicrosoft.com/${toLower(environmentName)}/dotnet-fileservice-api'
         }
         {
           name: 'WEBSITE_RUN_FROM_PACKAGE'
