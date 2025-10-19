@@ -157,6 +157,10 @@ resource webApplication 'Microsoft.Web/sites@2022-03-01' = {
           value: aspnetEnv
         }
         {
+          name: 'ServiceOptions__StorageAccountConnectionString'
+          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};AccountKey=${storageAccount.listKeys().keys[0].value}'
+        }
+        {
           name: 'WEBSITE_RUN_FROM_PACKAGE'
           value: '1'
         }
