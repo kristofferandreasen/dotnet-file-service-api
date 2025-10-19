@@ -27,6 +27,7 @@ var serviceOptions = builder.Configuration
     .Get<ServiceOptions>()!;
 
 builder.Services.AddApplicationInsightsTelemetry();
+builder.Services.AddAntiforgery();
 builder.Services.ConfigureMicrosoftSecurity(azureAdOptions);
 builder.Services.AddAuthorization();
 
