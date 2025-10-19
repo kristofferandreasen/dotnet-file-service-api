@@ -154,24 +154,10 @@ else {
     }
 }
 
-Write-Host "Add Developer AD Group for $appRegistrationName"
-
-foreach ($roleId in $roleIds) {
-    $body = @{
-        appRoleId   = $roleId
-        principalId = $developerGroupObjectId
-        resourceId  = $spnId
-    } | ConvertTo-Json -Compress
-
-    Write-Host $body
-
-    $endpoint = "https://graph.microsoft.com/v1.0/groups/$developerGroupObjectId/appRoleAssignments"
-
-    az rest `
-        --method POST `
-        --uri $endpoint `
-        --body $body `
-        --headers "Content-Type=application/json"
-}
+.\add-developer-access.ps1 `
+    -AppRegistrationName $appRegistrationName `
+    -DeveloperGroupObjectId $developerGroupObjectId `
+    -SpnId $spnId `
+    -RolesFilePath "./roles.json"
 
 Remove-Item manifest.json

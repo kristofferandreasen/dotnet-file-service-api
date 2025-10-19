@@ -161,6 +161,27 @@ resource webApplication 'Microsoft.Web/sites@2022-03-01' = {
           value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};AccountKey=${storageAccount.listKeys().keys[0].value}'
         }
         {
+          name: 'AzureAd__Instance'
+          #disable-next-line no-hardcoded-env-urls
+          value: 'https://login.microsoftonline.com/'
+        }
+        {
+          name: 'AzureAd__TenantId'
+          value: 'd86a990f-d2dd-470a-8bc1-23fb18c69b32'
+        }
+        {
+          name: 'AzureAd__ClientId'
+          value: '3a1ceaa6-d3f7-443b-96d1-e979c7d33740'
+        }
+        {
+          name: 'AzureAd__SwaggerClientId'
+          value: '2b650249-cf24-4057-ab99-04e62d5647cc'
+        }
+        {
+          name: 'AzureAd__Audience'
+          value: 'app://kristofferaandreasengmail.onmicrosoft.com/dev/dotnet-fileservice-api'
+        }
+        {
           name: 'WEBSITE_RUN_FROM_PACKAGE'
           value: '1'
         }
