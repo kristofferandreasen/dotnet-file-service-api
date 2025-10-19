@@ -80,12 +80,9 @@ if (app.Environment.IsDevelopment())
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Return 200 OK for root path
-app.MapGet("/", () => Results.Ok("OK"))
-   .AllowAnonymous();
-
 // Public health check (no auth)
 app.MapGet("/health", () => Results.Ok("OK"))
+   .WithTags("Health")
    .AllowAnonymous();
 
 // Map file endpoints

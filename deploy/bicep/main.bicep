@@ -28,7 +28,7 @@ var resourceName = '${companyAbbreviation}${systemAbbreviation}${toLower(environ
 // This can be an object id from an Azure AD group or an object id of
 // a specific user in Azure.
 ///////////////////////////////////////////////////////////////////////////////
-var devIds = [
+var devGroupIds = [
   '97e5cd6d-1e43-4894-bdd9-cd7e4ce528fb' // dotnet-developers Azure AD group
 ]
 
@@ -74,6 +74,7 @@ resource keyVault 'Microsoft.KeyVault/vaults@2021-10-01' = {
   location: location
   tags: tags
   properties: {
+    enableRbacAuthorization: true
     enabledForDeployment: false
     enabledForTemplateDeployment: true
     enableSoftDelete: true
@@ -179,7 +180,7 @@ resource webApplication 'Microsoft.Web/sites@2022-03-01' = {
         }
         {
           name: 'AzureAd__Audience'
-          value: 'app://kristofferaandreasengmail.onmicrosoft.com/dev/dotnet-fileservice-api'
+          value: 'app://kristofferaandreasengmail.onmicrosoft.com/${toLower(environmentName)}/dotnet-fileservice-api'
         }
         {
           name: 'WEBSITE_RUN_FROM_PACKAGE'
@@ -205,40 +206,42 @@ resource storageRoleAuthorizationApi 'Microsoft.Authorization/roleAssignments@20
 // Key Vault Access
 ///////////////////////////////////////////////////////////////////////////////
 
-var devKeyVaultAccess = [
-  for devId in devIds: {
-    tenantId: tenant().tenantId
-    objectId: devId
-    permissions: {
-      secrets: [
-        'list'
-        'get'
-        'set'
-      ]
-    }
+@description('Assign Key Vault roles using RBAC instead of access policies')
+var devGroupRoleAssignments = [
+  for devId in devGroupIds: {
+    name: guid(keyVault.id, devId, 'Key Vault Secrets Officer')
+    scope: keyVault.id
+    principalId: devId
+    roleDefinitionId: subscriptionResourceId(
+      'Microsoft.Authorization/roleDefinitions',
+      '00482a5a-887f-4fb3-b363-3b7fe8e74483'
+    ) // Key Vault Administrator
   }
 ]
 
-var keyVaultAccessPolicies = union(
-  [
-    {
-      tenantId: tenant().tenantId
-      objectId: webApplication.identity.principalId
-      permissions: {
-        secrets: [
-          'list'
-          'get'
-        ]
-      }
-    }
-  ],
-  devKeyVaultAccess
-)
-
-resource keyVaultAccess 'Microsoft.KeyVault/vaults/accessPolicies@2021-10-01' = {
-  name: 'replace'
-  parent: keyVault
+@description('Role assignment for the web application identity')
+resource webAppSecretAccess 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(keyVault.id, 'Web App Access', 'Key Vault Secrets User')
+  scope: keyVault
   properties: {
-    accessPolicies: keyVaultAccessPolicies
+    roleDefinitionId: subscriptionResourceId(
+      'Microsoft.Authorization/roleDefinitions',
+      '4633458b-17de-408a-b874-0445c86b69e6'
+    ) // Key Vault Secrets User
+    principalId: webApplication.identity.principalId
+    principalType: 'ServicePrincipal'
   }
 }
+
+@description('Role assignments for developer groups')
+resource devSecretAccess 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
+  for dev in devGroupRoleAssignments: {
+    name: dev.name
+    scope: keyVault
+    properties: {
+      roleDefinitionId: dev.roleDefinitionId
+      principalId: dev.principalId
+      principalType: 'Group'
+    }
+  }
+]

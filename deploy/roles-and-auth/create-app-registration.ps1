@@ -34,7 +34,7 @@ Write-Host "* ROLES DEFINITIONS" -ForegroundColor White
 Write-Host "**************************************************`n" -ForegroundColor White
 
 # Load roles
-$roles = Get-Content "./roles.json" -Raw | ConvertFrom-Json
+$roles = Get-Content "$PSScriptRoot/roles.json" -Raw | ConvertFrom-Json
 
 # Write roles to console
 Write-Host "Defined App Roles:"
@@ -154,10 +154,10 @@ else {
     }
 }
 
-.\add-developer-access.ps1 `
+& "$PSScriptRoot/add-developer-access.ps1" `
     -AppRegistrationName $appRegistrationName `
     -DeveloperGroupObjectId $developerGroupObjectId `
-    -SpnId $spnId `
-    -RolesFilePath "./roles.json"
+    -RoleIds ($roles | ForEach-Object { $_.id }) `
+    -SpnId $spnId
 
 Remove-Item manifest.json

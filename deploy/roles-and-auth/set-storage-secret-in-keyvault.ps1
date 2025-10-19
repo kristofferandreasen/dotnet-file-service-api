@@ -14,8 +14,8 @@ param (
 # -------------------------------------------
 # Variables
 # -------------------------------------------
-$storageAccountName = "kadotnet($Environment.ToLower())file"
-$keyVaultName = "kadotnet($Environment.ToLower())file"
+$storageAccountName = "kadotnet" + $Environment.ToLower() + "file"
+$keyVaultName = "kadotnet" + $Environment.ToLower() + "file"
 $secretName = "StorageAccountConnectionString"
 
 Write-Host "`n**************************************************" -ForegroundColor White
