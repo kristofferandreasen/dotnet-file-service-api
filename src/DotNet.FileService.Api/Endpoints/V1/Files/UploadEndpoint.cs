@@ -26,6 +26,7 @@ public static class UploadEndpoint
             .WithSummary(EndpointSummary)
             .WithDescription(EndpointDescription)
             .Accepts<IFormFile>(MultipartFormData)
+            .DisableAntiforgery()
             .Produces<string>(StatusCodes.Status200OK, DefaultContentType)
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status500InternalServerError)
