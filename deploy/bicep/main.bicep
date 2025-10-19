@@ -28,7 +28,7 @@ var resourceName = '${companyAbbreviation}${systemAbbreviation}${toLower(environ
 // This can be an object id from an Azure AD group or an object id of
 // a specific user in Azure.
 ///////////////////////////////////////////////////////////////////////////////
-var devIds = [
+var devGroupIds = [
   '97e5cd6d-1e43-4894-bdd9-cd7e4ce528fb' // dotnet-developers Azure AD group
 ]
 
@@ -207,8 +207,8 @@ resource storageRoleAuthorizationApi 'Microsoft.Authorization/roleAssignments@20
 ///////////////////////////////////////////////////////////////////////////////
 
 @description('Assign Key Vault roles using RBAC instead of access policies')
-var devRoleAssignments = [
-  for devId in devIds: {
+var devGroupRoleAssignments = [
+  for devId in devGroupIds: {
     name: guid(keyVault.id, devId, 'Key Vault Secrets Officer')
     scope: keyVault.id
     principalId: devId
@@ -233,15 +233,15 @@ resource webAppSecretAccess 'Microsoft.Authorization/roleAssignments@2022-04-01'
   }
 }
 
-@description('Role assignments for developers')
+@description('Role assignments for developer groups')
 resource devSecretAccess 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
-  for dev in devRoleAssignments: {
+  for dev in devGroupRoleAssignments: {
     name: dev.name
     scope: keyVault
     properties: {
       roleDefinitionId: dev.roleDefinitionId
       principalId: dev.principalId
-      principalType: 'User'
+      principalType: 'Group'
     }
   }
 ]
