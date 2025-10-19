@@ -68,19 +68,16 @@ if (app.Environment.IsDevelopment())
         c.OAuthScopeSeparator(" ");
         c.OAuthAppName("File Service API - Swagger");
     });
-
-    // Redirect root path to Swagger page
-    app.MapGet("/", context =>
-    {
-        context.Response.Redirect("/swagger/index.html");
-        return Task.CompletedTask;
-    });
 }
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 // Public health check (no auth)
+app.MapGet("/", () => Results.Ok("OK"))
+   .WithTags("Health")
+   .AllowAnonymous();
+
 app.MapGet("/health", () => Results.Ok("OK"))
    .WithTags("Health")
    .AllowAnonymous();
