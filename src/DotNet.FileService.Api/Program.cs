@@ -26,6 +26,7 @@ var serviceOptions = builder.Configuration
     .GetSection(ServiceOptions.SectionName)
     .Get<ServiceOptions>()!;
 
+builder.Services.AddApplicationInsightsTelemetry();
 builder.Services.ConfigureMicrosoftSecurity(azureAdOptions);
 builder.Services.AddAuthorization();
 
