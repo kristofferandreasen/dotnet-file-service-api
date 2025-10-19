@@ -82,6 +82,7 @@ app.UseAuthorization();
 
 // Public health check (no auth)
 app.MapGet("/health", () => Results.Ok("OK"))
+   .WithTags("Health")
    .AllowAnonymous();
 
 // Map file endpoints
