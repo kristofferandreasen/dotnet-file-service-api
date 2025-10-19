@@ -79,6 +79,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseAntiforgery();
 
 // Public health check (no auth)
 app.MapGet("/health", () => Results.Ok("OK"))
