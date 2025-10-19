@@ -34,12 +34,8 @@ public static class UploadEndpoint
 
     private static async Task<Results<Ok<string>, ProblemHttpResult>> HandleUploadAsync(
         IBlobStorageService blobStorageService,
-        HttpContext httpContext)
+        IFormFile file)
     {
-        var request = httpContext.Request;
-        var form = await request.ReadFormAsync();
-        var file = form.Files.FirstOrDefault();
-
         if (file is null)
         {
             return TypedResults.Problem(
