@@ -74,6 +74,7 @@ resource keyVault 'Microsoft.KeyVault/vaults@2021-10-01' = {
   location: location
   tags: tags
   properties: {
+    enableRbacAuthorization: true
     enabledForDeployment: false
     enabledForTemplateDeployment: true
     enableSoftDelete: true
@@ -205,40 +206,42 @@ resource storageRoleAuthorizationApi 'Microsoft.Authorization/roleAssignments@20
 // Key Vault Access
 ///////////////////////////////////////////////////////////////////////////////
 
-var devKeyVaultAccess = [
+@description('Assign Key Vault roles using RBAC instead of access policies')
+var devRoleAssignments = [
   for devId in devIds: {
-    tenantId: tenant().tenantId
-    objectId: devId
-    permissions: {
-      secrets: [
-        'list'
-        'get'
-        'set'
-      ]
-    }
+    name: guid(keyVault.id, devId, 'Key Vault Secrets Officer')
+    scope: keyVault.id
+    principalId: devId
+    roleDefinitionId: subscriptionResourceId(
+      'Microsoft.Authorization/roleDefinitions',
+      'f1a07417-d97a-45cb-824c-7a7467783830'
+    ) // Key Vault Secrets Officer
   }
 ]
 
-var keyVaultAccessPolicies = union(
-  [
-    {
-      tenantId: tenant().tenantId
-      objectId: webApplication.identity.principalId
-      permissions: {
-        secrets: [
-          'list'
-          'get'
-        ]
-      }
-    }
-  ],
-  devKeyVaultAccess
-)
-
-resource keyVaultAccess 'Microsoft.KeyVault/vaults/accessPolicies@2021-10-01' = {
-  name: 'replace'
-  parent: keyVault
+@description('Role assignment for the web application identity')
+resource webAppSecretAccess 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(keyVault.id, 'Web App Access', 'Key Vault Secrets User')
+  scope: keyVault
   properties: {
-    accessPolicies: keyVaultAccessPolicies
+    roleDefinitionId: subscriptionResourceId(
+      'Microsoft.Authorization/roleDefinitions',
+      '4633458b-17de-408a-b874-0445c86b69e6'
+    ) // Key Vault Secrets User
+    principalId: webApplication.identity.principalId
+    principalType: 'ServicePrincipal'
   }
 }
+
+@description('Role assignments for developers')
+resource devSecretAccess 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
+  for dev in devRoleAssignments: {
+    name: dev.name
+    scope: keyVault
+    properties: {
+      roleDefinitionId: dev.roleDefinitionId
+      principalId: dev.principalId
+      principalType: 'User'
+    }
+  }
+]
