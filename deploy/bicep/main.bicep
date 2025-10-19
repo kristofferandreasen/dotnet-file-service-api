@@ -214,8 +214,8 @@ var devGroupRoleAssignments = [
     principalId: devId
     roleDefinitionId: subscriptionResourceId(
       'Microsoft.Authorization/roleDefinitions',
-      'f1a07417-d97a-45cb-824c-7a7467783830'
-    ) // Key Vault Secrets Officer
+      '00482a5a-887f-4fb3-b363-3b7fe8e74483'
+    ) // Key Vault Administrator
   }
 ]
 
