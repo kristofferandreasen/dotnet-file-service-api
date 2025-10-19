@@ -158,7 +158,7 @@ resource webApplication 'Microsoft.Web/sites@2022-03-01' = {
         }
         {
           name: 'ServiceOptions__StorageAccountConnectionString'
-          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};AccountKey=${storageAccount.listKeys().keys[0].value}'
+          value: '@Microsoft.KeyVault(SecretUri=https://${resourceName}.vault.azure.net/secrets/StorageAccountConnectionString)'
         }
         {
           name: 'AzureAd__Instance'

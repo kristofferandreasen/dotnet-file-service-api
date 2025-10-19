@@ -52,6 +52,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "roles-and-auth", "roles-and
 		deploy\roles-and-auth\create-app-registration.ps1 = deploy\roles-and-auth\create-app-registration.ps1
 		deploy\roles-and-auth\create-swagger-registration.ps1 = deploy\roles-and-auth\create-swagger-registration.ps1
 		deploy\roles-and-auth\roles.json = deploy\roles-and-auth\roles.json
+		set-storage-secret-in-keyvault.ps1 = set-storage-secret-in-keyvault.ps1
 	EndProjectSection
 EndProject
 Global
