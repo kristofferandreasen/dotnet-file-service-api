@@ -27,7 +27,6 @@ var serviceOptions = builder.Configuration
     .Get<ServiceOptions>()!;
 
 builder.Services.AddApplicationInsightsTelemetry();
-builder.Services.AddAntiforgery();
 builder.Services.ConfigureMicrosoftSecurity(azureAdOptions);
 builder.Services.AddAuthorization();
 
@@ -80,7 +79,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseAntiforgery();
 
 // Public health check (no auth)
 app.MapGet("/health", () => Results.Ok("OK"))
