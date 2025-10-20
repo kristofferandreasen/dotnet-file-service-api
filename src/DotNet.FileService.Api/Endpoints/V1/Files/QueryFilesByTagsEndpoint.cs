@@ -101,6 +101,10 @@ public static class QueryFilesByTagsEndpoint
                 Description = "Successfully retrieved the list of files.",
                 Content = { [DefaultContentType] = new OpenApiMediaType() },
             },
+            [StatusCodes.Status400BadRequest.ToString()] = new OpenApiResponse
+            {
+                Description = "Tags are not formatted correctly.",
+            },
             [StatusCodes.Status500InternalServerError.ToString()] = new OpenApiResponse
             {
                 Description = "An error occurred while retrieving the list of files.",
