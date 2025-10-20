@@ -85,7 +85,9 @@ public class BlobStorageService(
             {
                 BlobName = blobItem.Name,
                 BlobUri = blobClient.Uri,
-                Metadata = properties.Value.Metadata,
+                Metadata = properties.Value.Metadata != null && properties.Value.Metadata.Any()
+                    ? properties.Value.Metadata
+                    : new Dictionary<string, string>(),
             });
         }
 

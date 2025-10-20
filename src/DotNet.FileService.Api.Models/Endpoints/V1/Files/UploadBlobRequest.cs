@@ -23,8 +23,19 @@ public record UploadBlobRequest
     public string? FilePathPrefix { get; init; }
 
     /// <summary>
-    /// Optional key-value metadata associated with the file.
-    /// Can be used to store additional information about the file, such as tags, owner, or content type.
+    /// Optional key-value metadata associated with the blob.
+    /// Can contain custom information such as tags, owner, or content type.
+    /// <para>
+    /// **Important:** This property is a JSON string. It must be sent as a string
+    /// in the multipart/form-data request along with the file. For example:
+    /// </para>
+    /// <code>
+    /// {
+    ///   "author": "John Doe",
+    ///   "category": "images",
+    ///   "resolution": "1080p"
+    /// }
+    /// </code>
     /// </summary>
-    public IDictionary<string, string>? Metadata { get; init; }
+    public string? Metadata { get; init; }
 }

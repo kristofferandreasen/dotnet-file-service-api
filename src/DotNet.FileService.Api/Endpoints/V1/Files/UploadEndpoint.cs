@@ -1,3 +1,4 @@
+using System.Text.Json;
 using DotNet.FileService.Api.Authorization;
 using DotNet.FileService.Api.Infrastructure.BlobStorage;
 using DotNet.FileService.Api.Models.Endpoints.V1.Files;
@@ -48,6 +49,10 @@ public static class UploadEndpoint
                 detail: "No file was uploaded. Please attach a file and try again.");
         }
 
+        var metadataDict = string.IsNullOrEmpty(request.Metadata)
+            ? []
+            : JsonSerializer.Deserialize<Dictionary<string, string>>(request.Metadata);
+
         await using var stream = request.File.OpenReadStream();
 
         var fileNameWithPrefix = string.IsNullOrWhiteSpace(request.FilePathPrefix)
@@ -57,13 +62,13 @@ public static class UploadEndpoint
         var blobUri = await blobStorageService.UploadFileAsync(
             stream,
             fileNameWithPrefix,
-            blobMetaData: request.Metadata);
+            blobMetaData: metadataDict);
 
         var response = new BlobResponse
         {
             BlobName = fileNameWithPrefix,
             BlobUri = blobUri,
-            Metadata = request.Metadata,
+            Metadata = metadataDict,
         };
 
         return TypedResults.Ok(response);
