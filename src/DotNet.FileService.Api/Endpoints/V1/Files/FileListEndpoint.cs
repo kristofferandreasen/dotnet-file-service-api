@@ -47,17 +47,6 @@ public static class FileListEndpoint
         op.Description = EndpointDescription;
         op.Tags = [new() { Name = OpenApiConstants.FilesTag }];
 
-        // Add optional query parameter for pathPrefix
-        op.Parameters ??= [];
-        op.Parameters.Add(new OpenApiParameter
-        {
-            Name = "pathPrefix",
-            In = ParameterLocation.Query,
-            Description = "Optional path prefix to filter files (e.g., 'images/').",
-            Required = false,
-            Schema = new OpenApiSchema { Type = "string" },
-        });
-
         op.Responses = new OpenApiResponses
         {
             [StatusCodes.Status200OK.ToString()] = new OpenApiResponse
