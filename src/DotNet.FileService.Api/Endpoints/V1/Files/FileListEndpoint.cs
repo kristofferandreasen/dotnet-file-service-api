@@ -1,5 +1,6 @@
 using DotNet.FileService.Api.Authorization;
 using DotNet.FileService.Api.Infrastructure.BlobStorage;
+using DotNet.FileService.Api.Models.Endpoints.V1.Files;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.OpenApi.Models;
 
@@ -30,12 +31,12 @@ public static class FileListEndpoint
             .WithOpenApi(CreateOpenApiOperation);
     }
 
-    private static Results<Ok<IEnumerable<string>>, ProblemHttpResult> HandleListFiles(
+    private static async Task<Results<Ok<IEnumerable<BlobResponse>>, ProblemHttpResult>> HandleListFiles(
         IBlobStorageService blobStorageService)
     {
-        var urls = blobStorageService.ListFiles();
+        var blobs = await blobStorageService.ListFilesAsync();
 
-        return TypedResults.Ok(urls);
+        return TypedResults.Ok(blobs);
     }
 
     private static OpenApiOperation CreateOpenApiOperation(OpenApiOperation op)

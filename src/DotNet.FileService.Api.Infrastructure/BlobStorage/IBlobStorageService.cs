@@ -1,3 +1,5 @@
+using DotNet.FileService.Api.Models.Endpoints.V1.Files;
+
 namespace DotNet.FileService.Api.Infrastructure.BlobStorage;
 
 /// <summary>
@@ -11,20 +13,24 @@ public interface IBlobStorageService
     /// </summary>
     /// <param name="fileStream">The input stream containing the file contents.</param>
     /// <param name="fileName">The name of the blob to create or overwrite.</param>
+    /// <param name="blobMetaData">Blob metadata.</param>
     /// <returns>
     /// A task that represents the asynchronous operation. The task result contains the
     /// publicly accessible URL of the uploaded blob.
     /// </returns>
-    Task<string> UploadFileAsync(Stream fileStream, string fileName);
+    Task<Uri> UploadFileAsync(
+        Stream fileStream,
+        string fileName,
+        IReadOnlyDictionary<string, string>? blobMetaData);
 
     /// <summary>
-    /// Retrieves a list of all blob URLs within the configured container.
+    /// Retrieves a list of all blobs within the configured container.
     /// </summary>
     /// <returns>
     /// Result contains a
-    /// collection of blob URLs.
+    /// collection of blobs with metadata.
     /// </returns>
-    IEnumerable<string> ListFiles();
+    Task<IEnumerable<BlobResponse>> ListFilesAsync();
 
     /// <summary>
     /// Downloads a blob from Azure Blob Storage by file name.

@@ -10,4 +10,8 @@
     <PackageReference Include="Azure.Storage.Blobs" Version="12.25.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DotNet.FileService.Api.Models\DotNet.FileService.Api.Models.csproj" />
+  </ItemGroup>
+
 </Project>

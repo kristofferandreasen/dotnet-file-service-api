@@ -1,5 +1,7 @@
+using Azure;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using DotNet.FileService.Api.Models.Endpoints.V1.Files;
 
 namespace DotNet.FileService.Api.Infrastructure.BlobStorage;
 
@@ -40,24 +42,54 @@ public class BlobStorageService(
     }
 
     /// <inheritdoc/>
-    public async Task<string> UploadFileAsync(Stream fileStream, string fileName)
+    public async Task<Uri> UploadFileAsync(
+        Stream fileStream,
+        string fileName,
+        IReadOnlyDictionary<string, string>? blobMetaData)
     {
         var containerClient = GetContainerClient();
         var blobClient = containerClient.GetBlobClient(fileName);
 
-        await blobClient.UploadAsync(fileStream, overwrite: true);
+        await blobClient.UploadAsync(
+            fileStream,
+            new BlobUploadOptions
+            {
+                Metadata = blobMetaData is not null
+                    ? blobMetaData.ToDictionary()
+                    : [],
+                Conditions = new BlobRequestConditions
+                {
+                    IfNoneMatch = ETag.All, // overwrites existing blob
+                },
+            });
 
-        return blobClient.Uri.ToString();
+        return blobClient.Uri;
     }
 
     /// <inheritdoc/>
-    public IEnumerable<string> ListFiles()
+    public async Task<IEnumerable<BlobResponse>> ListFilesAsync()
     {
         var containerClient = GetContainerClient();
         var blobs = containerClient.GetBlobs();
 
-        return blobs
-            .Select(b => containerClient.GetBlobClient(b.Name).Uri.ToString());
+        var result = new List<BlobResponse>();
+
+        foreach (var blobItem in blobs)
+        {
+            var blobClient = containerClient.GetBlobClient(blobItem.Name);
+
+            // Fetch metadata
+            var properties = await blobClient.GetPropertiesAsync();
+
+            result.Add(new BlobResponse
+            {
+                BlobName = blobItem.Name,
+                BlobUri = blobClient.Uri,
+                Metadata = properties.Value.Metadata,
+            });
+        }
+
+        return result;
     }
 
     /// <inheritdoc/>

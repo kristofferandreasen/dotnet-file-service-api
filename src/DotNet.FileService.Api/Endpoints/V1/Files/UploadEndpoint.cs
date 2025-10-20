@@ -1,5 +1,6 @@
 using DotNet.FileService.Api.Authorization;
 using DotNet.FileService.Api.Infrastructure.BlobStorage;
+using DotNet.FileService.Api.Models.Endpoints.V1.Files;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.OpenApi.Models;
 
@@ -11,7 +12,8 @@ public static class UploadEndpoint
     private const string EndpointRoute = "v1/files/upload";
     private const string EndpointSummary = "Uploads a file to Azure Blob Storage.";
     private const string EndpointDescription =
-        "Accepts a multipart/form-data request containing a file and uploads it to Azure Blob Storage. " +
+        "Accepts a multipart/form-data request containing a file, optional metadata, " +
+        "and an optional path prefix, then uploads it to Azure Blob Storage. " +
         "Requires the 'WriteAccess' role.";
 
     private const string DefaultContentType = "application/json";
@@ -25,19 +27,19 @@ public static class UploadEndpoint
             .WithTags(OpenApiConstants.FilesTag)
             .WithSummary(EndpointSummary)
             .WithDescription(EndpointDescription)
-            .Accepts<IFormFile>(MultipartFormData)
+            .Accepts<UploadBlobRequest>(MultipartFormData)
             .DisableAntiforgery()
-            .Produces<string>(StatusCodes.Status200OK, DefaultContentType)
+            .Produces<BlobResponse>(StatusCodes.Status200OK, DefaultContentType)
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status500InternalServerError)
             .WithOpenApi(CreateOpenApiOperation);
     }
 
-    private static async Task<Results<Ok<string>, ProblemHttpResult>> HandleUploadAsync(
+    private static async Task<Results<Ok<BlobResponse>, ProblemHttpResult>> HandleUploadAsync(
         IBlobStorageService blobStorageService,
-        IFormFile file)
+        UploadBlobRequest request)
     {
-        if (file is null)
+        if (request.File is null)
         {
             return TypedResults.Problem(
                 statusCode: StatusCodes.Status400BadRequest,
@@ -45,10 +47,25 @@ public static class UploadEndpoint
                 detail: "No file was uploaded. Please attach a file and try again.");
         }
 
-        await using var stream = file.OpenReadStream();
-        var fileUrl = await blobStorageService.UploadFileAsync(stream, file.FileName);
+        await using var stream = request.File.OpenReadStream();
 
-        return TypedResults.Ok(fileUrl);
+        var fileNameWithPrefix = string.IsNullOrWhiteSpace(request.FilePathPrefix)
+            ? request.File.FileName
+            : $"{request.FilePathPrefix.TrimEnd('/')}/{request.File.FileName}";
+
+        var blobUri = await blobStorageService.UploadFileAsync(
+            stream,
+            fileNameWithPrefix,
+            blobMetaData: request.Metadata);
+
+        var response = new BlobResponse
+        {
+            BlobName = fileNameWithPrefix,
+            BlobUri = blobUri,
+            Metadata = request.Metadata,
+        };
+
+        return TypedResults.Ok(response);
     }
 
     private static OpenApiOperation CreateOpenApiOperation(OpenApiOperation op)
@@ -60,7 +77,7 @@ public static class UploadEndpoint
 
         op.RequestBody = new OpenApiRequestBody
         {
-            Description = "The file to upload (multipart/form-data).",
+            Description = "The file, optional metadata, and optional path prefix to upload (multipart/form-data).",
             Required = true,
             Content =
             {
@@ -76,6 +93,17 @@ public static class UploadEndpoint
                                 Type = "string",
                                 Format = "binary",
                                 Description = "The file to upload.",
+                            },
+                            ["filePathPrefix"] = new OpenApiSchema
+                            {
+                                Type = "string",
+                                Description = "Optional path prefix for storing the file in blob storage.",
+                            },
+                            ["metadata"] = new OpenApiSchema
+                            {
+                                Type = "object",
+                                AdditionalProperties = new OpenApiSchema { Type = "string" },
+                                Description = "Optional metadata for the file.",
                             },
                         },
                         Required = new HashSet<string> { "file" },
