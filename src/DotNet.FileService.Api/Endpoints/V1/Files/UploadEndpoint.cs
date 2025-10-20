@@ -119,6 +119,13 @@ public static class UploadEndpoint
                                 Description = "Optional metadata for the file.",
                                 Example = new OpenApiString("metadata={\"author\":\"John Doe\",\"category\":\"images\",\"resolution\":\"1080p\"}"),
                             },
+                            ["tags"] = new OpenApiSchema
+                            {
+                                Type = "object",
+                                AdditionalProperties = new OpenApiSchema { Type = "string" },
+                                Description = "Optional tags for the file. File can be queried based on these.",
+                                Example = new OpenApiString("tags={\"author\":\"John Doe\",\"category\":\"images\",\"resolution\":\"1080p\"}"),
+                            },
                         },
                         Required = new HashSet<string> { "file" },
                     },
