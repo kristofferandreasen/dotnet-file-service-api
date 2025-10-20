@@ -26,7 +26,7 @@ public static class FileListEndpoint
             .WithTags(OpenApiConstants.FilesTag)
             .WithSummary(EndpointSummary)
             .WithDescription(EndpointDescription)
-            .Produces<IEnumerable<string>>(StatusCodes.Status200OK, DefaultContentType)
+            .Produces<IEnumerable<BlobResponse>>(StatusCodes.Status200OK, DefaultContentType)
             .ProducesProblem(StatusCodes.Status500InternalServerError)
             .WithOpenApi(CreateOpenApiOperation);
     }
