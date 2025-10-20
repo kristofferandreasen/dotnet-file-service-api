@@ -45,7 +45,7 @@ public class BlobStorageService(
     public async Task<Uri> UploadFileAsync(
         Stream fileStream,
         string fileName,
-        IReadOnlyDictionary<string, string>? blobMetaData)
+        IDictionary<string, string>? blobMetaData)
     {
         var containerClient = GetContainerClient();
         var blobClient = containerClient.GetBlobClient(fileName);
@@ -55,8 +55,8 @@ public class BlobStorageService(
             new BlobUploadOptions
             {
                 Metadata = blobMetaData is not null
-                    ? blobMetaData.ToDictionary()
-                    : [],
+                    ? blobMetaData
+                    : new Dictionary<string, string>(),
                 Conditions = new BlobRequestConditions
                 {
                     IfNoneMatch = ETag.All, // overwrites existing blob

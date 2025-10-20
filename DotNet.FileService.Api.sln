@@ -42,6 +42,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "bicep", "bicep", "{8A6B4245
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "modules", "modules", "{97C306F0-B32E-40D2-BC08-CFE63A7883A6}"
 	ProjectSection(SolutionItems) = preProject
+		deploy\bicep\modules\availabilityTest.bicep = deploy\bicep\modules\availabilityTest.bicep
 		deploy\bicep\modules\createResourceGroup.bicep = deploy\bicep\modules\createResourceGroup.bicep
 	EndProjectSection
 EndProject

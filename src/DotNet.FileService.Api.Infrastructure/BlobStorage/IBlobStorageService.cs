@@ -21,7 +21,7 @@ public interface IBlobStorageService
     Task<Uri> UploadFileAsync(
         Stream fileStream,
         string fileName,
-        IReadOnlyDictionary<string, string>? blobMetaData);
+        IDictionary<string, string>? blobMetaData);
 
     /// <summary>
     /// Retrieves a list of all blobs within the configured container.
