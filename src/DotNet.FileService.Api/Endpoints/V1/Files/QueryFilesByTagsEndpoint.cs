@@ -27,8 +27,8 @@ public static class QueryFilesByTagsEndpoint
             .WithSummary(EndpointSummary)
             .WithDescription(EndpointDescription)
             .Produces<IEnumerable<BlobResponse>>(StatusCodes.Status200OK, DefaultContentType)
-            .ProducesProblem(StatusCodes.Status500InternalServerError)
             .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status500InternalServerError)
             .WithOpenApi(CreateOpenApiOperation);
     }
 
@@ -72,28 +72,6 @@ public static class QueryFilesByTagsEndpoint
         op.Description = EndpointDescription;
         op.Tags = [new() { Name = OpenApiConstants.FilesTag }];
 
-        op.Parameters ??= [];
-
-        // Optional pathPrefix
-        op.Parameters.Add(new OpenApiParameter
-        {
-            Name = "pathPrefix",
-            In = ParameterLocation.Query,
-            Description = "Optional path prefix to filter files (e.g., 'images/').",
-            Required = false,
-            Schema = new OpenApiSchema { Type = "string" },
-        });
-
-        // Optional tags
-        op.Parameters.Add(new OpenApiParameter
-        {
-            Name = "tags",
-            In = ParameterLocation.Query,
-            Description = "Optional comma-separated list of blob tags in key=value format (e.g., 'tag1=value1,tag2=value2').",
-            Required = false,
-            Schema = new OpenApiSchema { Type = "string" },
-        });
-
         op.Responses = new OpenApiResponses
         {
             [StatusCodes.Status200OK.ToString()] = new OpenApiResponse
@@ -104,6 +82,7 @@ public static class QueryFilesByTagsEndpoint
             [StatusCodes.Status400BadRequest.ToString()] = new OpenApiResponse
             {
                 Description = "Tags are not formatted correctly.",
+                Content = { [DefaultErrorType] = new OpenApiMediaType() },
             },
             [StatusCodes.Status500InternalServerError.ToString()] = new OpenApiResponse
             {
