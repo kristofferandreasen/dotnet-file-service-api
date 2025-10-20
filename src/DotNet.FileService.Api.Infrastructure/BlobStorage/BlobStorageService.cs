@@ -45,7 +45,8 @@ public class BlobStorageService(
     public async Task<Uri> UploadFileAsync(
         Stream fileStream,
         string fileName,
-        IDictionary<string, string>? blobMetaData)
+        IDictionary<string, string>? blobMetaData = null,
+        IDictionary<string, string>? blobTags = null)
     {
         var containerClient = GetContainerClient();
         var blobClient = containerClient.GetBlobClient(fileName);
@@ -63,11 +64,18 @@ public class BlobStorageService(
                 },
             });
 
+        if (blobTags != null
+            && blobTags.Count > 0)
+        {
+            await blobClient.SetTagsAsync(blobTags);
+        }
+
         return blobClient.Uri;
     }
 
     /// <inheritdoc/>
-    public async Task<IEnumerable<BlobResponse>> ListFilesAsync()
+    public async Task<IEnumerable<BlobResponse>> ListFilesAsync(
+        string? pathPrefix = null)
     {
         var containerClient = GetContainerClient();
         var blobs = containerClient.GetBlobs();
@@ -76,6 +84,13 @@ public class BlobStorageService(
 
         foreach (var blobItem in blobs)
         {
+            // Skip blobs that don't match the prefix (if specified)
+            if (!string.IsNullOrEmpty(pathPrefix)
+                && !blobItem.Name.StartsWith(pathPrefix, StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
             var blobClient = containerClient.GetBlobClient(blobItem.Name);
 
             // Fetch metadata
@@ -84,6 +99,51 @@ public class BlobStorageService(
             result.Add(new BlobResponse
             {
                 BlobName = blobItem.Name,
+                BlobUri = blobClient.Uri,
+                Metadata = properties.Value.Metadata != null && properties.Value.Metadata.Any()
+                    ? properties.Value.Metadata
+                    : new Dictionary<string, string>(),
+            });
+        }
+
+        return result;
+    }
+
+    /// <inheritdoc/>
+    public async Task<IEnumerable<BlobResponse>> QueryFilesByTagsAsync(
+        IDictionary<string, string>? tagFilters,
+        string? pathPrefix = null)
+    {
+        var containerClient = GetContainerClient();
+
+        // Return empty if no tags are provided
+        if (tagFilters == null || tagFilters.Count == 0)
+        {
+            return [];
+        }
+
+        // Build Azure tag query string
+        // Example: "tag1 = 'value1' AND tag2 = 'value2'"
+        var queryParts = tagFilters.Select(kv => $"{kv.Key} = '{kv.Value}'");
+        var tagQuery = string.Join(" AND ", queryParts);
+
+        var result = new List<BlobResponse>();
+
+        await foreach (var blobItem in containerClient.FindBlobsByTagsAsync(tagQuery))
+        {
+            // Apply optional path prefix filter
+            if (!string.IsNullOrEmpty(pathPrefix) &&
+                !blobItem.BlobName.StartsWith(pathPrefix, StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            var blobClient = containerClient.GetBlobClient(blobItem.BlobName);
+            var properties = await blobClient.GetPropertiesAsync();
+
+            result.Add(new BlobResponse
+            {
+                BlobName = blobItem.BlobName,
                 BlobUri = blobClient.Uri,
                 Metadata = properties.Value.Metadata != null && properties.Value.Metadata.Any()
                     ? properties.Value.Metadata

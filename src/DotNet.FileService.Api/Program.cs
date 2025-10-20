@@ -85,6 +85,7 @@ app.MapGet("/health", () => Results.Ok("OK"))
 // Map file endpoints
 app.MapUploadEndpoint();
 app.MapFileListEndpoint();
+app.MapQueryFilesByTagsEndpoint();
 app.MapDownloadEndpoint();
 
 // Map sas endpoints

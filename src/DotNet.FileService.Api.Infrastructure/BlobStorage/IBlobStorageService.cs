@@ -14,6 +14,7 @@ public interface IBlobStorageService
     /// <param name="fileStream">The input stream containing the file contents.</param>
     /// <param name="fileName">The name of the blob to create or overwrite.</param>
     /// <param name="blobMetaData">Blob metadata.</param>
+    /// <param name="blobTags">Blob tags (Queryable with SDK).</param>
     /// <returns>
     /// A task that represents the asynchronous operation. The task result contains the
     /// publicly accessible URL of the uploaded blob.
@@ -21,16 +22,38 @@ public interface IBlobStorageService
     Task<Uri> UploadFileAsync(
         Stream fileStream,
         string fileName,
-        IDictionary<string, string>? blobMetaData);
+        IDictionary<string, string>? blobMetaData = null,
+        IDictionary<string, string>? blobTags = null);
 
     /// <summary>
     /// Retrieves a list of all blobs within the configured container.
     /// </summary>
+    /// <param name="pathPrefix">Optional param to query files with a specific path.</param>
     /// <returns>
     /// Result contains a
     /// collection of blobs with metadata.
     /// </returns>
-    Task<IEnumerable<BlobResponse>> ListFilesAsync();
+    Task<IEnumerable<BlobResponse>> ListFilesAsync(
+        string? pathPrefix = null);
+
+    /// <summary>
+    /// Retrieves blobs from Azure Blob Storage that match the specified tags.
+    /// </summary>
+    /// <param name="tagFilters">
+    /// Optional key-value pairs of blob tags. Only blobs containing all specified tags with matching values are returned.
+    /// </param>
+    /// <param name="pathPrefix">
+    /// Optional prefix to filter blob names (e.g., "images/").
+    /// </param>
+    /// <returns>
+    /// A task that returns an <see cref="IEnumerable{BlobResponse}"/> containing the blob name, URI, and metadata.
+    /// </returns>
+    /// <remarks>
+    /// Uses server-side blob tagging for efficient filtering without enumerating the entire container.
+    /// </remarks>
+    Task<IEnumerable<BlobResponse>> QueryFilesByTagsAsync(
+        IDictionary<string, string>? tagFilters,
+        string? pathPrefix = null);
 
     /// <summary>
     /// Downloads a blob from Azure Blob Storage by file name.

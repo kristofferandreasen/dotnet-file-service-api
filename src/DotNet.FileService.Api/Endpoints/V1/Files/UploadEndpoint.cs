@@ -4,6 +4,7 @@ using DotNet.FileService.Api.Infrastructure.BlobStorage;
 using DotNet.FileService.Api.Models.Endpoints.V1.Files;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 
 namespace DotNet.FileService.Api.Endpoints.V1.Files;
@@ -53,6 +54,10 @@ public static class UploadEndpoint
             ? []
             : JsonSerializer.Deserialize<Dictionary<string, string>>(request.Metadata);
 
+        var tagsDict = string.IsNullOrEmpty(request.Tags)
+            ? []
+            : JsonSerializer.Deserialize<Dictionary<string, string>>(request.Tags);
+
         await using var stream = request.File.OpenReadStream();
 
         var fileNameWithPrefix = string.IsNullOrWhiteSpace(request.FilePathPrefix)
@@ -62,13 +67,15 @@ public static class UploadEndpoint
         var blobUri = await blobStorageService.UploadFileAsync(
             stream,
             fileNameWithPrefix,
-            blobMetaData: metadataDict);
+            blobMetaData: metadataDict,
+            blobTags: tagsDict);
 
         var response = new BlobResponse
         {
             BlobName = fileNameWithPrefix,
             BlobUri = blobUri,
             Metadata = metadataDict,
+            Tags = tagsDict,
         };
 
         return TypedResults.Ok(response);
@@ -110,6 +117,7 @@ public static class UploadEndpoint
                                 Type = "object",
                                 AdditionalProperties = new OpenApiSchema { Type = "string" },
                                 Description = "Optional metadata for the file.",
+                                Example = new OpenApiString("metadata={\"author\":\"John Doe\",\"category\":\"images\",\"resolution\":\"1080p\"}"),
                             },
                         },
                         Required = new HashSet<string> { "file" },

@@ -38,4 +38,17 @@ public record UploadBlobRequest
     /// </code>
     /// </summary>
     public string? Metadata { get; init; }
+
+    /// <summary>
+    /// Optional key-value tags associated with the blob.
+    /// Tags are stored separately from metadata and are **queryable** using server-side tag filtering.
+    /// <para>
+    /// **Important:** This property is a string containing comma-separated key=value pairs.
+    /// For example, "category=images,author=John Doe,resolution=1080p".
+    /// </para>
+    /// <para>
+    /// These tags can be used to efficiently query blobs without enumerating the entire container.
+    /// </para>
+    /// </summary>
+    public string? Tags { get; init; }
 }

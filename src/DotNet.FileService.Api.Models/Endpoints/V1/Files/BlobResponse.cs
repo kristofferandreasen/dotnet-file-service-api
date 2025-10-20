@@ -21,5 +21,13 @@ public record BlobResponse
     /// Can contain custom information such as tags, owner, or content type.
     /// </summary>
     public IDictionary<string, string>? Metadata { get; init; }
+
+    /// <summary>
+    /// Optional key-value tags associated with the blob.
+    /// Tags are stored separately from metadata and
+    /// can be **queried efficiently** using server-side blob tag filtering.
+    /// Each entry represents a tag key and its corresponding value.
+    /// </summary>
+    public IDictionary<string, string>? Tags { get; init; }
 }
 
