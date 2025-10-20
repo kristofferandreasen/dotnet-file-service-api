@@ -2,6 +2,7 @@ using DotNet.FileService.Api.Authorization;
 using DotNet.FileService.Api.Infrastructure.BlobStorage;
 using DotNet.FileService.Api.Models.Endpoints.V1.Files;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 
 namespace DotNet.FileService.Api.Endpoints.V1.Files;
@@ -37,7 +38,7 @@ public static class UploadEndpoint
 
     private static async Task<Results<Ok<BlobResponse>, ProblemHttpResult>> HandleUploadAsync(
         IBlobStorageService blobStorageService,
-        UploadBlobRequest request)
+        [FromForm] UploadBlobRequest request)
     {
         if (request.File is null)
         {
