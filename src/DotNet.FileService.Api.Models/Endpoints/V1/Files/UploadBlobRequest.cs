@@ -30,11 +30,7 @@ public record UploadBlobRequest
     /// in the multipart/form-data request along with the file. For example:
     /// </para>
     /// <code>
-    /// {
-    ///   "author": "John Doe",
-    ///   "category": "images",
-    ///   "resolution": "1080p"
-    /// }
+    /// {"author":"John Doe","category":"images","resolution":"1080p"}
     /// </code>
     /// </summary>
     public string? Metadata { get; init; }
@@ -49,6 +45,9 @@ public record UploadBlobRequest
     /// <para>
     /// These tags can be used to efficiently query blobs without enumerating the entire container.
     /// </para>
+    /// <code>
+    /// {"author":"John Doe","category":"images","resolution":"1080p"}
+    /// </code>
     /// </summary>
     public string? Tags { get; init; }
 }

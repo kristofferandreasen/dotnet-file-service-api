@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using DotNet.FileService.Api.Authorization;
 using DotNet.FileService.Api.Infrastructure.BlobStorage;
 using DotNet.FileService.Api.Models.Endpoints.V1.Files;
@@ -34,8 +35,8 @@ public static class QueryFilesByTagsEndpoint
 
     private static async Task<Results<Ok<IEnumerable<BlobResponse>>, ProblemHttpResult>> HandleQueryFilesByTags(
         IBlobStorageService blobStorageService,
-        string? pathPrefix,
-        string? tags) // e.g., "tag1=value1,tag2=value2"
+        [Required] string tags, // e.g., "tag1=value1,tag2=value2"
+        string? pathPrefix)
     {
         Dictionary<string, string>? tagFilters = null;
 
