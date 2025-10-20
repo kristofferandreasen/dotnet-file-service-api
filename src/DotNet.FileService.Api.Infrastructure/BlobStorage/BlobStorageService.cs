@@ -84,7 +84,6 @@ public class BlobStorageService(
 
         foreach (var blobItem in blobs)
         {
-            // Skip blobs that don't match the prefix (if specified)
             if (!string.IsNullOrEmpty(pathPrefix)
                 && !blobItem.Name.StartsWith(pathPrefix, StringComparison.OrdinalIgnoreCase))
             {
@@ -93,16 +92,15 @@ public class BlobStorageService(
 
             var blobClient = containerClient.GetBlobClient(blobItem.Name);
 
-            // Fetch metadata
-            var properties = await blobClient.GetPropertiesAsync();
+            var metadata = await GetBlobMetadataAsync(blobClient);
+            var tags = await GetBlobTagsAsync(blobClient);
 
             result.Add(new BlobResponse
             {
                 BlobName = blobItem.Name,
                 BlobUri = blobClient.Uri,
-                Metadata = properties.Value.Metadata != null && properties.Value.Metadata.Any()
-                    ? properties.Value.Metadata
-                    : new Dictionary<string, string>(),
+                Metadata = metadata,
+                Tags = tags,
             });
         }
 
@@ -139,15 +137,15 @@ public class BlobStorageService(
             }
 
             var blobClient = containerClient.GetBlobClient(blobItem.BlobName);
-            var properties = await blobClient.GetPropertiesAsync();
+            var metadata = await GetBlobMetadataAsync(blobClient);
+            var tags = await GetBlobTagsAsync(blobClient);
 
             result.Add(new BlobResponse
             {
                 BlobName = blobItem.BlobName,
                 BlobUri = blobClient.Uri,
-                Metadata = properties.Value.Metadata != null && properties.Value.Metadata.Any()
-                    ? properties.Value.Metadata
-                    : new Dictionary<string, string>(),
+                Metadata = metadata,
+                Tags = tags,
             });
         }
 
@@ -166,6 +164,43 @@ public class BlobStorageService(
         }
 
         return await blobClient.OpenReadAsync();
+    }
+
+    /// <summary>
+    /// Safely fetches blob metadata.
+    /// </summary>
+    private static async Task<IDictionary<string, string>> GetBlobMetadataAsync(
+        BlobClient blobClient)
+    {
+        try
+        {
+            var properties = await blobClient.GetPropertiesAsync();
+
+            return properties.Value.Metadata ?? new Dictionary<string, string>();
+        }
+        catch (RequestFailedException ex) when (ex.Status == 404)
+        {
+            return new Dictionary<string, string>();
+        }
+    }
+
+    /// <summary>
+    /// Safely fetches blob tags.
+    /// </summary>
+    private static async Task<IDictionary<string, string>> GetBlobTagsAsync(
+        BlobClient blobClient)
+    {
+        try
+        {
+            var tagResult = await blobClient.GetTagsAsync();
+
+            return tagResult.Value.Tags ?? new Dictionary<string, string>();
+        }
+        catch (RequestFailedException ex) when (ex.Status == 404)
+        {
+            // Blob has no tags
+            return new Dictionary<string, string>();
+        }
     }
 }
 
