@@ -2,6 +2,7 @@ using DotNet.FileService.Api.Authorization;
 using DotNet.FileService.Api.Infrastructure.BlobStorage;
 using DotNet.FileService.Api.Models.Endpoints.V1.Files;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 
@@ -21,6 +22,7 @@ public static class QueryFilesByTagsEndpoint
     public static void MapQueryFilesByTagsEndpoint(this IEndpointRouteBuilder app)
     {
         app.MapGet(EndpointRoute, HandleQueryFilesByTags)
+            .WithMetadata(new BindNeverAttribute())
             .RequireAuthorization(PolicyConstants.BlobReadAccess)
             .WithName(EndpointName)
             .WithTags(OpenApiConstants.FilesTag)
@@ -81,6 +83,20 @@ public static class QueryFilesByTagsEndpoint
             {
                 Type = "string",
                 Example = new OpenApiString("category=images,author=John Doe"),
+            },
+        });
+
+        // Define optional 'pathPrefix'
+        op.Parameters.Add(new OpenApiParameter
+        {
+            Name = "pathPrefix",
+            In = ParameterLocation.Query,
+            Required = false,
+            Description = "Optional prefix to filter blobs by path (e.g., 'customer/').",
+            Schema = new OpenApiSchema
+            {
+                Type = "string",
+                Example = new OpenApiString("customer/"),
             },
         });
 
