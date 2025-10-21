@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace DotNet.FileService.Api.Models.Endpoints.V1.Files;
 
@@ -31,6 +32,9 @@ public record UploadBlobRequest
     /// </para>
     /// </summary>
     /// <example>category=images,author=John Doe,resolution=1080p</example>
+    [SwaggerSchema(
+        Description = "Optional metadata for the file as comma-separated key=value pairs.",
+        Example = "category=images,author=John Doe,resolution=1080p")]
     public string? Metadata { get; init; }
 
     /// <summary>
