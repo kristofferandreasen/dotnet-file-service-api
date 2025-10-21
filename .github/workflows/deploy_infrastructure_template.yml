@@ -54,12 +54,6 @@ jobs:
           echo "ENVIRONMENT_NAME=$ENVIRONMENT_NAME" >> $GITHUB_OUTPUT
           echo "RESOURCE_GROUP=DotNetFileService-API-$ENVIRONMENT_NAME" >> $GITHUB_OUTPUT
 
-      - name: Uninstall Azure CLI and install specific version
-        shell: bash
-        run: |
-          brew uninstall azure-cli || true
-          pip3 install azure-cli==2.72.0
-
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -68,14 +62,14 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           enable-AzPSSession: true
 
-      - name: Create Resource Group With AZ CLI
-        run: |
-          az deployment sub create \
-            --location swedencentral \
-            --template-file ./deploy/bicep/modules/createResourceGroup.bicep \
-            --parameters environmentName=${{ steps.vars.outputs.ENVIRONMENT_NAME }} \
-            --only-show-errors \
-            --output none
+      - name: Deploy Resource Group using Bicep
+        uses: azure/arm-deploy@v2
+        with:
+          scope: subscription
+          region: swedencentral
+          subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          template: ./deploy/bicep/modules/createResourceGroup.bicep
+          parameters: environmentName=${{ steps.vars.outputs.ENVIRONMENT_NAME }}
 
       - name: Deploy Bicep
         uses: azure/arm-deploy@v1

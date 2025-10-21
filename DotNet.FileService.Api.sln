@@ -29,10 +29,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{0162
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{4F85C74A-5AC3-4D93-8A0C-A18A1CC2DDBA}"
 	ProjectSection(SolutionItems) = preProject
-		.github\workflows\deploy_apps_pipeline.yml = .github\workflows\deploy_apps_pipeline.yml
 		.github\workflows\deploy_apps_template.yml = .github\workflows\deploy_apps_template.yml
-		.github\workflows\deploy_infrastructure_pipeline.yml = .github\workflows\deploy_infrastructure_pipeline.yml
 		.github\workflows\deploy_infrastructure_template.yml = .github\workflows\deploy_infrastructure_template.yml
+		.github\workflows\deploy_pipeline.yml = .github\workflows\deploy_pipeline.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "bicep", "bicep", "{8A6B4245-ED79-43F2-A0DC-0E5A4E6C9C82}"
