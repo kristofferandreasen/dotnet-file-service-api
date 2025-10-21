@@ -29,10 +29,8 @@ public record UploadBlobRequest
     /// **Important:** This property is a JSON string. It must be sent as a string
     /// in the multipart/form-data request along with the file. For example:
     /// </para>
-    /// <code>
-    /// {"author":"John Doe","category":"images","resolution":"1080p"}
-    /// </code>
     /// </summary>
+    /// <example>category=images,author=John Doe,resolution=1080p</example>
     public string? Metadata { get; init; }
 
     /// <summary>
@@ -45,9 +43,7 @@ public record UploadBlobRequest
     /// <para>
     /// These tags can be used to efficiently query blobs without enumerating the entire container.
     /// </para>
-    /// <code>
-    /// {"author":"John Doe","category":"images","resolution":"1080p"}
-    /// </code>
     /// </summary>
+    /// <example>category=images,author=John Doe,resolution=1080p</example>
     public string? Tags { get; init; }
 }

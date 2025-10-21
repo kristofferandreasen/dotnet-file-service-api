@@ -50,35 +50,40 @@ public static class UploadEndpoint
                 detail: "No file was uploaded. Please attach a file and try again.");
         }
 
-        var metadataDict = string.IsNullOrEmpty(request.Metadata)
-            ? []
-            : JsonSerializer.Deserialize<Dictionary<string, string>>(request.Metadata);
-
-        var tagsDict = string.IsNullOrEmpty(request.Tags)
-            ? []
-            : JsonSerializer.Deserialize<Dictionary<string, string>>(request.Tags);
-
-        await using var stream = request.File.OpenReadStream();
-
-        var fileNameWithPrefix = string.IsNullOrWhiteSpace(request.FilePathPrefix)
-            ? request.File.FileName
-            : $"{request.FilePathPrefix.TrimEnd('/')}/{request.File.FileName}";
-
-        var blobUri = await blobStorageService.UploadFileAsync(
-            stream,
-            fileNameWithPrefix,
-            blobMetaData: metadataDict,
-            blobTags: tagsDict);
-
-        var response = new BlobResponse
+        try
         {
-            BlobName = fileNameWithPrefix,
-            BlobUri = blobUri,
-            Metadata = metadataDict,
-            Tags = tagsDict,
-        };
+            var tagsDict = ParseTags(request.Tags);
+            var metadataDict = ParseTags(request.Metadata);
 
-        return TypedResults.Ok(response);
+            await using var stream = request.File.OpenReadStream();
+
+            var fileNameWithPrefix = string.IsNullOrWhiteSpace(request.FilePathPrefix)
+                ? request.File.FileName
+                : $"{request.FilePathPrefix.TrimEnd('/')}/{request.File.FileName}";
+
+            var blobUri = await blobStorageService.UploadFileAsync(
+                stream,
+                fileNameWithPrefix,
+                blobMetaData: metadataDict,
+                blobTags: tagFilters);
+
+            var response = new BlobResponse
+            {
+                BlobName = fileNameWithPrefix,
+                BlobUri = blobUri,
+                Metadata = metadataDict,
+                Tags = tagFilters,
+            };
+
+            return TypedResults.Ok(response);
+        }
+        catch (FormatException ex)
+        {
+            return TypedResults.Problem(
+                statusCode: StatusCodes.Status400BadRequest,
+                title: "Invalid tag format",
+                detail: ex.Message);
+        }
     }
 
     private static OpenApiOperation CreateOpenApiOperation(OpenApiOperation op)
@@ -150,5 +155,29 @@ public static class UploadEndpoint
         };
 
         return op;
+    }
+
+    private static Dictionary<string, string>? ParseTags(string? tags)
+    {
+        if (string.IsNullOrWhiteSpace(tags))
+        {
+            return null;
+        }
+
+        var tagFilters = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        var splitTags = tags.Split(',', StringSplitOptions.RemoveEmptyEntries);
+
+        foreach (var t in splitTags)
+        {
+            var parts = t.Split('=', 2);
+            if (parts.Length != 2 || string.IsNullOrWhiteSpace(parts[0]))
+            {
+                throw new FormatException($"'{t}' is invalid. Tags must be in key=value format.");
+            }
+
+            tagFilters[parts[0].Trim()] = parts[1].Trim();
+        }
+
+        return tagFilters;
     }
 }

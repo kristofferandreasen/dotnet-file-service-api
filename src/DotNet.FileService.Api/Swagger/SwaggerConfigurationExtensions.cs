@@ -31,6 +31,10 @@ public static class SwaggerConfigurationExtensions
                 Description = "API for managing file uploads, downloads, and listings in Azure Blob Storage.",
             });
 
+            var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+            c.IncludeXmlComments(xmlPath);
+
             // Define OAuth2 flow for Microsoft login
             c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
             {
