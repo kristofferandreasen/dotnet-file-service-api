@@ -2,7 +2,6 @@ using DotNet.FileService.Api.Authorization;
 using DotNet.FileService.Api.Infrastructure.BlobStorage;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 
 namespace DotNet.FileService.Api.Endpoints.V1.Files;
@@ -53,20 +52,6 @@ public static class DeleteFileEndpoint
         op.Summary = EndpointSummary;
         op.Description = EndpointDescription;
         op.Tags = [new() { Name = OpenApiConstants.FilesTag }];
-
-        op.Parameters ??= [];
-        op.Parameters.Add(new OpenApiParameter
-        {
-            Name = "fileName",
-            In = ParameterLocation.Path,
-            Required = true,
-            Description = "The name of the file (blob) to delete.",
-            Schema = new OpenApiSchema
-            {
-                Type = "string",
-                Example = new OpenApiString("example.pdf"),
-            },
-        });
 
         op.Responses = new OpenApiResponses
         {
