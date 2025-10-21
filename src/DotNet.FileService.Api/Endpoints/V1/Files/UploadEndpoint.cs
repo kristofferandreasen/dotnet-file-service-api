@@ -1,4 +1,3 @@
-using System.Text.Json;
 using DotNet.FileService.Api.Authorization;
 using DotNet.FileService.Api.Infrastructure.BlobStorage;
 using DotNet.FileService.Api.Models.Endpoints.V1.Files;
