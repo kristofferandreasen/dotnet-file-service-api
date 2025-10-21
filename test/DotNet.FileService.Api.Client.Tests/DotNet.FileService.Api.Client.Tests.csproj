@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -12,14 +12,12 @@
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
-    <PackageReference Include="NSubstitute" Version="5.3.0" />
     <PackageReference Include="xunit" Version="2.5.3" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\DotNet.FileService.Api.Infrastructure\DotNet.FileService.Api.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\src\DotNet.FileService.Api\DotNet.FileService.Api.csproj" />
+    <ProjectReference Include="..\..\src\DotNet.FileService.Api.Client\DotNet.FileService.Api.Client.csproj" />
   </ItemGroup>
 
   <ItemGroup>

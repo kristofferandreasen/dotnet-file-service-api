@@ -58,6 +58,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "roles-and-auth", "roles-and
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNet.FileService.Api.Tests", "test\DotNet.FileService.Api.Tests\DotNet.FileService.Api.Tests.csproj", "{F504176F-744E-42C8-9194-63976319A516}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNet.FileService.Api.Client.Tests", "test\DotNet.FileService.Api.Client.Tests\DotNet.FileService.Api.Client.Tests.csproj", "{16CE8162-8642-4640-A2F7-445010572097}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -84,6 +86,10 @@ Global
 		{F504176F-744E-42C8-9194-63976319A516}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F504176F-744E-42C8-9194-63976319A516}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F504176F-744E-42C8-9194-63976319A516}.Release|Any CPU.Build.0 = Release|Any CPU
+		{16CE8162-8642-4640-A2F7-445010572097}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16CE8162-8642-4640-A2F7-445010572097}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16CE8162-8642-4640-A2F7-445010572097}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16CE8162-8642-4640-A2F7-445010572097}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -98,6 +104,7 @@ Global
 		{97C306F0-B32E-40D2-BC08-CFE63A7883A6} = {8A6B4245-ED79-43F2-A0DC-0E5A4E6C9C82}
 		{1C60077E-626C-4E83-BD67-EE3EBDEA89EA} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{F504176F-744E-42C8-9194-63976319A516} = {6C025242-D91F-48EE-86D0-62078F3219EC}
+		{16CE8162-8642-4640-A2F7-445010572097} = {6C025242-D91F-48EE-86D0-62078F3219EC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3611093F-0390-4AA2-A142-7C1DF05A3853}

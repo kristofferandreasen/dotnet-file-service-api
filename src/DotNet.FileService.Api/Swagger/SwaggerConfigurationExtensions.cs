@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using DotNet.FileService.Api.Infrastructure.Options;
 using Microsoft.OpenApi.Models;
 
@@ -6,6 +7,7 @@ namespace DotNet.FileService.Api.Swagger;
 /// <summary>
 /// Extension methods for configuring Swagger (OpenAPI) in the File Service API.
 /// </summary>
+[ExcludeFromCodeCoverage]
 public static class SwaggerConfigurationExtensions
 {
     /// <summary>
