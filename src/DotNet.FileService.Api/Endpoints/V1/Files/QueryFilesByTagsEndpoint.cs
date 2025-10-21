@@ -45,26 +45,20 @@ public static class QueryFilesByTagsEndpoint
                 detail: "The 'tags' query parameter must not be empty.");
         }
 
-        var tagFilters = new Dictionary<string, string>();
-        var splitTags = tags.Split(',', StringSplitOptions.RemoveEmptyEntries);
-
-        foreach (var t in splitTags)
+        try
         {
-            var parts = t.Split('=', 2);
-            if (parts.Length != 2 || string.IsNullOrWhiteSpace(parts[0]))
-            {
-                return TypedResults.Problem(
-                    statusCode: StatusCodes.Status400BadRequest,
-                    title: "Invalid tag format",
-                    detail: $"'{t}' is invalid. Tags must be in key=value format.");
-            }
+            var tagFilters = ParseTags(tags);
+            var blobs = await blobStorageService.QueryFilesByTagsAsync(tagFilters, pathPrefix);
 
-            tagFilters[parts[0]] = parts[1];
+            return TypedResults.Ok(blobs);
         }
-
-        var blobs = await blobStorageService.QueryFilesByTagsAsync(tagFilters, pathPrefix);
-
-        return TypedResults.Ok(blobs);
+        catch (FormatException ex)
+        {
+            return TypedResults.Problem(
+                statusCode: StatusCodes.Status400BadRequest,
+                title: "Invalid tag format",
+                detail: ex.Message);
+        }
     }
 
     private static OpenApiOperation CreateOpenApiOperation(OpenApiOperation op)
@@ -112,4 +106,29 @@ public static class QueryFilesByTagsEndpoint
 
         return op;
     }
+
+    private static Dictionary<string, string> ParseTags(string tags)
+    {
+        if (string.IsNullOrWhiteSpace(tags))
+        {
+            throw new ArgumentException("Tags string must not be empty.", nameof(tags));
+        }
+
+        var tagFilters = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        var splitTags = tags.Split(',', StringSplitOptions.RemoveEmptyEntries);
+
+        foreach (var t in splitTags)
+        {
+            var parts = t.Split('=', 2);
+            if (parts.Length != 2 || string.IsNullOrWhiteSpace(parts[0]))
+            {
+                throw new FormatException($"'{t}' is invalid. Tags must be in key=value format.");
+            }
+
+            tagFilters[parts[0].Trim()] = parts[1].Trim();
+        }
+
+        return tagFilters;
+    }
+
 }
