@@ -64,5 +64,16 @@ public interface IBlobStorageService
     /// for the blob contents, or <c>null</c> if the blob does not exist.
     /// </returns>
     Task<Stream?> DownloadFileAsync(string fileName);
+
+    /// <summary>
+    /// Deletes a blob from Azure Blob Storage by file name.
+    /// </summary>
+    /// <param name="fileName">The name of the blob to delete.</param>
+    /// <returns>
+    /// A task that represents the asynchronous operation.
+    /// The task result is <c>true</c> if the blob was successfully deleted,
+    /// or <c>false</c> if the blob did not exist.
+    /// </returns>
+    Task<bool> DeleteFileAsync(string fileName);
 }
 

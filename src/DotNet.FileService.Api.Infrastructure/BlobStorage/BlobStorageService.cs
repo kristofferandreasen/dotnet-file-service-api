@@ -166,6 +166,21 @@ public class BlobStorageService(
         return await blobClient.OpenReadAsync();
     }
 
+    /// <inheritdoc/>
+    public async Task<bool> DeleteFileAsync(string fileName)
+    {
+        var containerClient = GetContainerClient();
+        var blobClient = containerClient.GetBlobClient(fileName);
+
+        if (!await blobClient.ExistsAsync())
+        {
+            return false;
+        }
+
+        await blobClient.DeleteAsync();
+        return true;
+    }
+
     /// <summary>
     /// Safely fetches blob metadata.
     /// </summary>

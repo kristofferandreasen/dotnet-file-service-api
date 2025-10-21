@@ -130,5 +130,4 @@ public static class QueryFilesByTagsEndpoint
 
         return tagFilters;
     }
-
 }
