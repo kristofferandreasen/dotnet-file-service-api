@@ -65,14 +65,14 @@ public static class UploadEndpoint
                 stream,
                 fileNameWithPrefix,
                 blobMetaData: metadataDict,
-                blobTags: tagFilters);
+                blobTags: tagsDict);
 
             var response = new BlobResponse
             {
                 BlobName = fileNameWithPrefix,
                 BlobUri = blobUri,
                 Metadata = metadataDict,
-                Tags = tagFilters,
+                Tags = tagsDict,
             };
 
             return TypedResults.Ok(response);

@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using DotNet.FileService.Api.Infrastructure.Options;
 using Microsoft.OpenApi.Models;
 
