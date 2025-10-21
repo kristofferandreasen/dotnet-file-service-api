@@ -34,9 +34,13 @@ public static class QueryFilesByTagsEndpoint
 
     private static async Task<Results<Ok<IEnumerable<BlobResponse>>, ProblemHttpResult>> HandleQueryFilesByTags(
         IBlobStorageService blobStorageService,
-        IDictionary<string, string> tagFilters,
+        HttpRequest request,
         string? pathPrefix)
     {
+        var tagFilters = request.Query
+            .Where(kvp => kvp.Key != nameof(pathPrefix)) // ignore other params
+            .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.ToString());
+
         if (tagFilters.Count == 0)
         {
             return TypedResults.Problem(
