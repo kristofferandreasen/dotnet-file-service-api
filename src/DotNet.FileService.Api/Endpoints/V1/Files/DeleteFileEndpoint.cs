@@ -9,7 +9,7 @@ namespace DotNet.FileService.Api.Endpoints.V1.Files;
 public static class DeleteFileEndpoint
 {
     private const string EndpointName = "DeleteFile";
-    private const string EndpointRoute = "v1/files/{fileName}";
+    private const string EndpointRoute = "v1/files/{*fileName}"; // Catch-all route parameter
     private const string EndpointSummary = "Deletes a file from Azure Blob Storage.";
     private const string EndpointDescription =
         "Deletes the specified file from the configured Azure Blob Storage container. " +
