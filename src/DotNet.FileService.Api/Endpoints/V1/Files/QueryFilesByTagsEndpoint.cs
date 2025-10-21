@@ -34,32 +34,15 @@ public static class QueryFilesByTagsEndpoint
 
     private static async Task<Results<Ok<IEnumerable<BlobResponse>>, ProblemHttpResult>> HandleQueryFilesByTags(
         IBlobStorageService blobStorageService,
-        string tags,
+        IDictionary<string, string> tagFilters,
         string? pathPrefix)
     {
-        if (string.IsNullOrWhiteSpace(tags))
+        if (tagFilters.Count == 0)
         {
             return TypedResults.Problem(
                 statusCode: StatusCodes.Status400BadRequest,
                 title: "Tags required",
                 detail: "The 'tags' query parameter must not be empty.");
-        }
-
-        var tagFilters = new Dictionary<string, string>();
-        var splitTags = tags.Split(',', StringSplitOptions.RemoveEmptyEntries);
-
-        foreach (var t in splitTags)
-        {
-            var parts = t.Split('=', 2);
-            if (parts.Length != 2 || string.IsNullOrWhiteSpace(parts[0]))
-            {
-                return TypedResults.Problem(
-                    statusCode: StatusCodes.Status400BadRequest,
-                    title: "Invalid tag format",
-                    detail: $"'{t}' is invalid. Tags must be in key=value format.");
-            }
-
-            tagFilters[parts[0]] = parts[1];
         }
 
         var blobs = await blobStorageService.QueryFilesByTagsAsync(tagFilters, pathPrefix);
