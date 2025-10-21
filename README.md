@@ -57,6 +57,46 @@ Configuration is handled via the standard `.NET IOptions<T>` pattern:
 }
 ```
 
+# ⚙️ Example: Registering the Client
+
+```
+using DotNet.FileService.Api.Client.DependencyInjection;
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddFileServiceApiClient(
+    scope: "api://your-api-scope/.default",
+    configureClient: client =>
+    {
+        client.BaseAddress = new Uri("https://fileservice.yourdomain.com/");
+    });
+
+// ... other services
+
+```
+
+# 💉 Example: Using the Client
+
+```
+public class FileController : ControllerBase
+{
+    private readonly IFileServiceApiClient _fileServiceApiClient;
+
+    public FileController(IFileServiceApiClient fileServiceApiClient)
+    {
+        _fileServiceApiClient = fileServiceApiClient;
+    }
+
+    [HttpGet("files/{id}")]
+    public async Task<IActionResult> GetFileAsync(Guid id)
+    {
+        var file = await _fileServiceApiClient.GetFileAsync(id);
+        return Ok(file);
+    }
+}
+
+```
+
 # ⚙️ Run Infrastructure in Azure
 
 This guide explains how to deploy the Azure infrastructure for the **.NET FileService API** using **Bicep templates** and **GitHub Actions**.  
