@@ -36,8 +36,6 @@ public static class SwaggerConfigurationExtensions
             var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
             c.IncludeXmlComments(xmlPath);
 
-            c.EnableAnnotations();
-
             // Define OAuth2 flow for Microsoft login
             c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
             {

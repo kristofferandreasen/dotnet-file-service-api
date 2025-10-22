@@ -1,5 +1,6 @@
 using DotNet.FileService.Api.Authorization;
 using DotNet.FileService.Api.Infrastructure.BlobStorage;
+using DotNet.FileService.Api.Models.BlobStorage;
 using DotNet.FileService.Api.Models.Endpoints.V1.Files;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -53,6 +54,12 @@ public static class UploadEndpoint
         {
             var tagsDict = ParseTags(request.Tags);
             var metadataDict = ParseTags(request.Metadata);
+
+            // Add predefined metadata
+            metadataDict[BlobMetadataConstants.UploadedAt] = DateTime.UtcNow.ToString("o");
+            metadataDict[BlobMetadataConstants.UploadedBy] = "System";
+            metadataDict[BlobMetadataConstants.ApiVersion] = OpenApiConstants.ApiVersionV1;
+            metadataDict[BlobMetadataConstants.ContentType] = request.File.ContentType;
 
             await using var stream = request.File.OpenReadStream();
 
@@ -156,11 +163,11 @@ public static class UploadEndpoint
         return op;
     }
 
-    private static Dictionary<string, string>? ParseTags(string? tags)
+    private static Dictionary<string, string> ParseTags(string? tags)
     {
         if (string.IsNullOrWhiteSpace(tags))
         {
-            return null;
+            return [];
         }
 
         var tagFilters = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
