@@ -45,7 +45,7 @@ public static class UploadEndpoint
     private static async Task<Results<Ok<BlobResponse>, ProblemHttpResult>> HandleUploadAsync(
         IBlobStorageService blobStorageService,
         [FromForm] IFormFile file,
-        [FromBody] UploadBlobRequest request)
+        [FromForm] UploadBlobRequest request)
     {
         if (file is null)
         {
