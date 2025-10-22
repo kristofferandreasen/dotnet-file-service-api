@@ -1,4 +1,5 @@
 using DotNet.FileService.Api.Authorization;
+using DotNet.FileService.Api.Helpers;
 using DotNet.FileService.Api.Infrastructure.BlobStorage;
 using DotNet.FileService.Api.Models.BlobStorage;
 using DotNet.FileService.Api.Models.Endpoints.V1.Files;
@@ -52,8 +53,8 @@ public static class UploadEndpoint
 
         try
         {
-            var tagsDict = ParseTags(request.Tags);
-            var metadataDict = ParseTags(request.Metadata);
+            var tagsDict = RequestHelper.ParseDictionary(request.Tags, false);
+            var metadataDict = RequestHelper.ParseDictionary(request.Metadata, false);
 
             // Add predefined metadata
             metadataDict[BlobMetadataConstants.UploadedAt] = DateTime.UtcNow.ToString("o");
@@ -75,8 +76,8 @@ public static class UploadEndpoint
 
             var response = new BlobResponse
             {
-                BlobName = fileNameWithPrefix,
-                BlobUri = blobUri,
+                FileName = fileNameWithPrefix,
+                BlobUrl = blobUri,
                 Metadata = metadataDict,
                 Tags = tagsDict,
             };
@@ -161,29 +162,5 @@ public static class UploadEndpoint
         };
 
         return op;
-    }
-
-    private static Dictionary<string, string> ParseTags(string? tags)
-    {
-        if (string.IsNullOrWhiteSpace(tags))
-        {
-            return [];
-        }
-
-        var tagFilters = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-        var splitTags = tags.Split(',', StringSplitOptions.RemoveEmptyEntries);
-
-        foreach (var t in splitTags)
-        {
-            var parts = t.Split('=', 2);
-            if (parts.Length != 2 || string.IsNullOrWhiteSpace(parts[0]))
-            {
-                throw new FormatException($"'{t}' is invalid. Tags must be in key=value format.");
-            }
-
-            tagFilters[parts[0].Trim()] = parts[1].Trim();
-        }
-
-        return tagFilters;
     }
 }

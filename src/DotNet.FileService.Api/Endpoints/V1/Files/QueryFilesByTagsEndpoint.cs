@@ -1,4 +1,5 @@
 using DotNet.FileService.Api.Authorization;
+using DotNet.FileService.Api.Helpers;
 using DotNet.FileService.Api.Infrastructure.BlobStorage;
 using DotNet.FileService.Api.Models.Endpoints.V1.Files;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -49,7 +50,7 @@ public static class QueryFilesByTagsEndpoint
 
         try
         {
-            var tagFilters = ParseTags(tags);
+            var tagFilters = RequestHelper.ParseDictionary(tags);
             var blobs = await blobStorageService.QueryFilesByTagsAsync(tagFilters, pathPrefix);
 
             return TypedResults.Ok(blobs);
@@ -90,29 +91,5 @@ public static class QueryFilesByTagsEndpoint
         };
 
         return op;
-    }
-
-    private static Dictionary<string, string> ParseTags(string tags)
-    {
-        if (string.IsNullOrWhiteSpace(tags))
-        {
-            throw new ArgumentException("Tags string must not be empty.", nameof(tags));
-        }
-
-        var tagFilters = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-        var splitTags = tags.Split(',', StringSplitOptions.RemoveEmptyEntries);
-
-        foreach (var t in splitTags)
-        {
-            var parts = t.Split('=', 2);
-            if (parts.Length != 2 || string.IsNullOrWhiteSpace(parts[0]))
-            {
-                throw new FormatException($"'{t}' is invalid. Tags must be in key=value format.");
-            }
-
-            tagFilters[parts[0].Trim()] = parts[1].Trim();
-        }
-
-        return tagFilters;
     }
 }

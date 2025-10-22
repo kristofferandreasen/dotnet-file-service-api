@@ -9,12 +9,12 @@ public record BlobResponse
     /// <summary>
     /// The name of the blob (file) in the storage container.
     /// </summary>
-    public string BlobName { get; init; } = default!;
+    public string FileName { get; init; } = default!;
 
     /// <summary>
     /// The full URI to access the blob.
     /// </summary>
-    public Uri BlobUri { get; init; } = default!;
+    public Uri BlobUrl { get; init; } = default!;
 
     /// <summary>
     /// Optional key-value metadata associated with the blob.

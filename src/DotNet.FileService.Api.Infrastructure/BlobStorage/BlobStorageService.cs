@@ -97,8 +97,8 @@ public class BlobStorageService(
 
             result.Add(new BlobResponse
             {
-                BlobName = blobItem.Name,
-                BlobUri = blobClient.Uri,
+                FileName = blobItem.Name,
+                BlobUrl = blobClient.Uri,
                 Metadata = metadata,
                 Tags = tags,
             });
@@ -142,8 +142,8 @@ public class BlobStorageService(
 
             result.Add(new BlobResponse
             {
-                BlobName = blobItem.BlobName,
-                BlobUri = blobClient.Uri,
+                FileName = blobItem.BlobName,
+                BlobUrl = blobClient.Uri,
                 Metadata = metadata,
                 Tags = tags,
             });
