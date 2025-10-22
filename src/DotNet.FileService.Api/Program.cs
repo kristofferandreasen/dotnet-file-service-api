@@ -87,7 +87,7 @@ app.MapUploadEndpoint();
 app.MapFileListEndpoint();
 app.MapQueryFilesByTagsEndpoint();
 app.MapDownloadEndpoint();
-app.MapUploadEndpoint();
+app.MapUpdateFileEndpoint();
 app.MapDeleteFileEndpoint();
 
 // Map sas endpoints
