@@ -17,15 +17,13 @@ public interface IFileServiceApiClient
     /// <summary>
     /// Queries files in blob storage based on tags, optionally filtered by path prefix.
     /// </summary>
-    /// <param name="tags">
-    /// Comma-separated key=value list (e.g., "category=images,author=John"). Required.
+    /// <param name="request">
+    /// Request object containing tags as a dictionary and optional file path prefix.
     /// </param>
-    /// <param name="pathPrefix">Optional path prefix to filter files.</param>
     /// <returns>A collection of <see cref="BlobResponse"/> containing files that match the specified tags and optional path prefix.</returns>
-    [Get("/v1/files/tags-query")]
+    [Post("/v1/files/tags-query")]
     Task<IEnumerable<BlobResponse>> QueryFilesByTagsAsync(
-        [Query] string tags,
-        [Query] string? pathPrefix = null);
+        [Body] QueryFilesByTagsRequest request);
 
     /// <summary>
     /// Uploads a file with optional metadata and tags.
