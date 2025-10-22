@@ -35,7 +35,7 @@ public interface IFileServiceApiClient
     /// <returns>The <see cref="Uri"/> of the uploaded blob in Azure Blob Storage.</returns>
     [Multipart]
     [Post("/v1/files/upload")]
-    Task<Uri> UploadFileAsync(
+    Task<BlobResponse> UploadFileAsync(
         [AliasAs("file")] StreamPart file,
         [AliasAs("metadata")] string? metadata = null,
         [AliasAs("tags")] string? tags = null,
@@ -66,12 +66,10 @@ public interface IFileServiceApiClient
     /// Updates the metadata and/or tags of an existing blob.
     /// </summary>
     /// <param name="fileName">The name of the blob to update.</param>
-    /// <param name="metadata">Optional JSON string of metadata key-value pairs to update.</param>
-    /// <param name="tags">Optional JSON string of tag key-value pairs to update.</param>
+    /// <param name="request">Update request.</param>
     /// <returns>True if the blob was updated; false if the blob does not exist.</returns>
-    [Put("/v1/files")]
+    [Put("/v1/files/{fileName}")]
     Task<bool> UpdateFileAsync(
-        [Query] string fileName,
-        [Body(BodySerializationMethod.Serialized)] string? metadata = null,
-        [Body(BodySerializationMethod.Serialized)] string? tags = null);
+        [AliasAs("fileName")] string fileName,
+        [AliasAs("request")] UpdateFileRequest request);
 }
