@@ -52,4 +52,26 @@ public interface IFileServiceApiClient
     [Get("/v1/files/download/{fileName}")]
     Task<Stream> DownloadFileAsync(
         [AliasAs("fileName")] string fileName);
+
+    /// <summary>
+    /// Deletes a file from Azure Blob Storage.
+    /// </summary>
+    /// <param name="fileName">The name of the file to delete.</param>
+    /// <returns>True if the file was deleted; false if the file did not exist.</returns>
+    [Delete("/v1/files/{fileName}")]
+    Task<bool> DeleteFileAsync(
+        [AliasAs("fileName")] string fileName);
+
+    /// <summary>
+    /// Updates the metadata and/or tags of an existing blob.
+    /// </summary>
+    /// <param name="fileName">The name of the blob to update.</param>
+    /// <param name="metadata">Optional JSON string of metadata key-value pairs to update.</param>
+    /// <param name="tags">Optional JSON string of tag key-value pairs to update.</param>
+    /// <returns>True if the blob was updated; false if the blob does not exist.</returns>
+    [Put("/v1/files")]
+    Task<bool> UpdateFileAsync(
+        [Query] string fileName,
+        [Body(BodySerializationMethod.Serialized)] string? metadata = null,
+        [Body(BodySerializationMethod.Serialized)] string? tags = null);
 }
