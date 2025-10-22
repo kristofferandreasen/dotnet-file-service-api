@@ -1,3 +1,4 @@
+using Azure;
 using DotNet.FileService.Api.Authorization;
 using DotNet.FileService.Api.Helpers;
 using DotNet.FileService.Api.Infrastructure.BlobStorage;
@@ -85,6 +86,13 @@ public static class UploadEndpoint
 
             return TypedResults.Ok(response);
         }
+        catch (RequestFailedException ex) when (ex.Status == 409)
+        {
+            return TypedResults.Problem(
+                statusCode: StatusCodes.Status409Conflict,
+                title: "Conflict: File already exists",
+                detail: ex.Message);
+        }
         catch (FormatException ex)
         {
             return TypedResults.Problem(
@@ -161,6 +169,10 @@ public static class UploadEndpoint
             [StatusCodes.Status400BadRequest.ToString()] = new OpenApiResponse
             {
                 Description = "No file was provided or the request was invalid.",
+            },
+            [StatusCodes.Status409Conflict.ToString()] = new OpenApiResponse
+            {
+                Description = "File already exists.",
             },
             [StatusCodes.Status500InternalServerError.ToString()] = new OpenApiResponse
             {
