@@ -1,9 +1,10 @@
 using DotNet.FileService.Api.Authorization;
-using DotNet.FileService.Api.Helpers;
 using DotNet.FileService.Api.Infrastructure.BlobStorage;
 using DotNet.FileService.Api.Models.Endpoints.V1.Files;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 
 namespace DotNet.FileService.Api.Endpoints.V1.Files;
@@ -15,14 +16,14 @@ public static class QueryFilesByTagsEndpoint
     private const string EndpointSummary = "Queries files in Azure Blob Storage by tags.";
     private const string EndpointDescription =
         "Retrieves a list of file URLs matching the specified blob tags. Requires 'ReadAccess' role. " +
-        "Tags format example: \"category=images,author=John Doe,resolution=1080p\".";
+        "Tags are sent in the request body as JSON.";
 
     private const string DefaultContentType = "application/json";
     private const string DefaultErrorType = "application/problem+json";
 
     public static void MapQueryFilesByTagsEndpoint(this IEndpointRouteBuilder app)
     {
-        app.MapGet(EndpointRoute, HandleQueryFilesByTags)
+        app.MapPost(EndpointRoute, HandleQueryFilesByTags)
             .WithMetadata(new BindNeverAttribute())
             .RequireAuthorization(PolicyConstants.BlobReadAccess)
             .WithName(EndpointName)
@@ -37,21 +38,21 @@ public static class QueryFilesByTagsEndpoint
 
     private static async Task<Results<Ok<IEnumerable<BlobResponse>>, ProblemHttpResult>> HandleQueryFilesByTags(
         IBlobStorageService blobStorageService,
-        string tags,
-        string? pathPrefix)
+        [FromBody] QueryFilesByTagsRequest request)
     {
-        if (string.IsNullOrWhiteSpace(tags))
+        if (request.Tags == null || request.Tags.Count == 0)
         {
             return TypedResults.Problem(
                 statusCode: StatusCodes.Status400BadRequest,
                 title: "Tags required",
-                detail: "The 'tags' query parameter must not be empty.");
+                detail: "The 'Tags' field in the request body must not be empty.");
         }
 
         try
         {
-            var tagFilters = RequestHelper.ParseDictionary(tags);
-            var blobs = await blobStorageService.QueryFilesByTagsAsync(tagFilters, pathPrefix);
+            var blobs = await blobStorageService.QueryFilesByTagsAsync(
+                request.Tags,
+                request.FilePathPrefix);
 
             return TypedResults.Ok(blobs);
         }
@@ -70,6 +71,42 @@ public static class QueryFilesByTagsEndpoint
         op.Summary = EndpointSummary;
         op.Description = EndpointDescription;
         op.Tags = [new() { Name = OpenApiConstants.FilesTag }];
+
+        op.RequestBody = new OpenApiRequestBody
+        {
+            Required = true,
+            Content =
+            {
+                ["application/json"] = new OpenApiMediaType
+                {
+                    Schema = new OpenApiSchema
+                    {
+                        Type = "object",
+                        Properties =
+                        {
+                            ["tags"] = new OpenApiSchema
+                            {
+                                Type = "object",
+                                AdditionalProperties = new OpenApiSchema { Type = "string" },
+                                Description = "Key-value pairs to filter files by tags.",
+                                Example = new OpenApiObject
+                                {
+                                    ["category"] = new OpenApiString("images"),
+                                    ["author"] = new OpenApiString("John Doe"),
+                                    ["resolution"] = new OpenApiString("1080p"),
+                                },
+                            },
+                            ["filePathPrefix"] = new OpenApiSchema
+                            {
+                                Type = "string",
+                                Description = "Optional path prefix to filter files by virtual folder.",
+                            },
+                        },
+                        Required = new HashSet<string> { "tags" },
+                    },
+                },
+            },
+        };
 
         op.Responses = new OpenApiResponses
         {
