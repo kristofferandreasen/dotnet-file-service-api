@@ -46,26 +46,37 @@ public class BlobStorageService(
         Stream fileStream,
         string fileName,
         IDictionary<string, string>? blobMetaData = null,
-        IDictionary<string, string>? blobTags = null)
+        IDictionary<string, string>? blobTags = null,
+        bool overwrite = false)
     {
         var containerClient = GetContainerClient();
         var blobClient = containerClient.GetBlobClient(fileName);
 
-        await blobClient.UploadAsync(
-            fileStream,
-            new BlobUploadOptions
-            {
-                Metadata = blobMetaData is not null
-                    ? blobMetaData
-                    : new Dictionary<string, string>(),
-                Conditions = new BlobRequestConditions
-                {
-                    IfNoneMatch = ETag.All, // overwrites existing blob
-                },
-            });
+        if (overwrite)
+        {
+            await blobClient.UploadAsync(fileStream, overwrite: true);
+        }
 
-        if (blobTags != null
-            && blobTags.Count > 0)
+        if (!overwrite)
+        {
+            await blobClient.UploadAsync(
+                fileStream,
+                new BlobUploadOptions
+                {
+                    Metadata = blobMetaData ?? new Dictionary<string, string>(),
+                    Conditions = new BlobRequestConditions
+                    {
+                        IfNoneMatch = ETag.All,
+                    },
+                });
+        }
+
+        if (blobMetaData != null && blobMetaData.Count > 0)
+        {
+            await blobClient.SetMetadataAsync(blobMetaData);
+        }
+
+        if (blobTags != null && blobTags.Count > 0)
         {
             await blobClient.SetTagsAsync(blobTags);
         }

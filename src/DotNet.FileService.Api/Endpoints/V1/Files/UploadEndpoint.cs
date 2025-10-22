@@ -72,7 +72,8 @@ public static class UploadEndpoint
                 stream,
                 fileNameWithPrefix,
                 blobMetaData: metadataDict,
-                blobTags: tagsDict);
+                blobTags: tagsDict,
+                request.OverwriteFile);
 
             var response = new BlobResponse
             {
@@ -102,7 +103,7 @@ public static class UploadEndpoint
 
         op.RequestBody = new OpenApiRequestBody
         {
-            Description = "The file, optional metadata, and optional path prefix to upload (multipart/form-data).",
+            Description = "The file, optional metadata, optional path prefix, and overwrite flag to upload (multipart/form-data).",
             Required = true,
             Content =
             {
@@ -129,14 +130,20 @@ public static class UploadEndpoint
                                 Type = "object",
                                 AdditionalProperties = new OpenApiSchema { Type = "string" },
                                 Description = "Optional metadata for the file.",
-                                Example = new OpenApiString("metadata={\"author\":\"John Doe\",\"category\":\"images\",\"resolution\":\"1080p\"}"),
+                                Example = new OpenApiString("{\"author\":\"John Doe\",\"category\":\"images\",\"resolution\":\"1080p\"}"),
                             },
                             ["tags"] = new OpenApiSchema
                             {
                                 Type = "object",
                                 AdditionalProperties = new OpenApiSchema { Type = "string" },
                                 Description = "Optional tags for the file. File can be queried based on these.",
-                                Example = new OpenApiString("tags={\"author\":\"John Doe\",\"category\":\"images\",\"resolution\":\"1080p\"}"),
+                                Example = new OpenApiString("{\"author\":\"John Doe\",\"category\":\"images\",\"resolution\":\"1080p\"}"),
+                            },
+                            ["overwriteFile"] = new OpenApiSchema
+                            {
+                                Type = "boolean",
+                                Description = "If true, the uploaded file will overwrite any existing blob with the same name.",
+                                Example = new OpenApiBoolean(false),
                             },
                         },
                         Required = new HashSet<string> { "file" },

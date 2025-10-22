@@ -46,4 +46,11 @@ public record UploadBlobRequest
     /// </summary>
     /// <example>category=images,author=John Doe,resolution=1080p</example>
     public string? Tags { get; init; }
+
+    /// <summary>
+    /// Determines whether to overwrite an existing
+    /// file with the same name in blob storage.
+    /// Default is false, which will prevent overwriting existing files.
+    /// </summary>
+    public bool OverwriteFile { get; init; }
 }

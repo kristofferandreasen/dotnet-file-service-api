@@ -15,6 +15,7 @@ public interface IBlobStorageService
     /// <param name="fileName">The name of the blob to create or overwrite.</param>
     /// <param name="blobMetaData">Blob metadata.</param>
     /// <param name="blobTags">Blob tags (Queryable with SDK).</param>
+    /// <param name="overwrite">Specifies whether to overwrite file.</param>
     /// <returns>
     /// A task that represents the asynchronous operation. The task result contains the
     /// publicly accessible URL of the uploaded blob.
@@ -23,7 +24,8 @@ public interface IBlobStorageService
         Stream fileStream,
         string fileName,
         IDictionary<string, string>? blobMetaData = null,
-        IDictionary<string, string>? blobTags = null);
+        IDictionary<string, string>? blobTags = null,
+        bool overwrite = false);
 
     /// <summary>
     /// Retrieves a list of all blobs within the configured container.
