@@ -1,6 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Http;
-
 namespace DotNet.FileService.Api.Models.Endpoints.V1.Files;
 
 /// <summary>
@@ -9,13 +6,6 @@ namespace DotNet.FileService.Api.Models.Endpoints.V1.Files;
 /// </summary>
 public record UploadBlobRequest
 {
-    /// <summary>
-    /// The file to upload.
-    /// This property is required and must not be null.
-    /// </summary>
-    [Required]
-    public IFormFile File { get; init; } = default!;
-
     /// <summary>
     /// Optional path prefix to store the file under a specific folder or virtual path in blob storage.
     /// For example, "images/" or "documents/2025/".
