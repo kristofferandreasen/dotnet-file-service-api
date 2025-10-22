@@ -10,7 +10,7 @@ namespace DotNet.FileService.Api.Endpoints.V1.SasTokens;
 public static class SasWriteEndpoint
 {
     private const string EndpointName = "GetWriteSasUrl";
-    private const string EndpointRoute = "v1/sas/write/{fileName}";
+    private const string EndpointRoute = "v1/sas/write/{*fileName}"; // Catch-all route parameter
     private const string EndpointSummary = "Generates a write-only SAS URL for a blob.";
     private const string EndpointDescription =
         "Returns a time-limited SAS URL that allows write-only access for uploading a specific blob. " +

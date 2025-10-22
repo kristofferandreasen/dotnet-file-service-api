@@ -10,7 +10,7 @@ namespace DotNet.FileService.Api.Endpoints.V1.SasTokens;
 public static class SasReadEndpoint
 {
     private const string EndpointName = "GetReadSasUrl";
-    private const string EndpointRoute = "v1/sas/read/{fileName}";
+    private const string EndpointRoute = "v1/sas/read/{*fileName}"; // Catch-all route parameter
     private const string EndpointSummary = "Generates a read-only SAS URL for a blob.";
     private const string EndpointDescription =
         "Returns a time-limited SAS URL that allows read-only access to the specified blob. " +
