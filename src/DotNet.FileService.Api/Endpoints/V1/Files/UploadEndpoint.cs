@@ -36,6 +36,7 @@ public static class UploadEndpoint
             .DisableAntiforgery()
             .Produces<BlobResponse>(StatusCodes.Status200OK, DefaultContentType)
             .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status409Conflict)
             .ProducesProblem(StatusCodes.Status500InternalServerError)
             .WithOpenApi(CreateOpenApiOperation);
     }
