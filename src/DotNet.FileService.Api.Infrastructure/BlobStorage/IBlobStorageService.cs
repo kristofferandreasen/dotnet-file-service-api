@@ -68,6 +68,25 @@ public interface IBlobStorageService
     Task<Stream?> DownloadFileAsync(string fileName);
 
     /// <summary>
+    /// Updates the metadata and/or tags of an existing blob in Azure Blob Storage.
+    /// </summary>
+    /// <param name="fileName">The name of the blob to update.</param>
+    /// <param name="metadata">
+    /// Optional dictionary of metadata to update. Existing metadata is merged with these values.
+    /// </param>
+    /// <param name="tags">
+    /// Optional dictionary of tags to update. Existing tags are merged with these values.
+    /// </param>
+    /// <returns>
+    /// A task that represents the asynchronous operation.
+    /// The task result is <c>true</c> if the blob exists and was updated; <c>false</c> if the blob does not exist.
+    /// </returns>
+    Task<bool> UpdateFileAsync(
+        string fileName,
+        IDictionary<string, string>? metadata = null,
+        IDictionary<string, string>? tags = null);
+
+    /// <summary>
     /// Deletes a blob from Azure Blob Storage by file name.
     /// </summary>
     /// <param name="fileName">The name of the blob to delete.</param>

@@ -178,6 +178,45 @@ public class BlobStorageService(
     }
 
     /// <inheritdoc/>
+    public async Task<bool> UpdateFileAsync(
+        string fileName,
+        IDictionary<string, string>? metadata = null,
+        IDictionary<string, string>? tags = null)
+    {
+        var containerClient = GetContainerClient();
+        var blobClient = containerClient.GetBlobClient(fileName);
+
+        if (!await blobClient.ExistsAsync())
+        {
+            return false;
+        }
+
+        if (metadata != null && metadata.Count > 0)
+        {
+            var existingMetadata = await GetBlobMetadataAsync(blobClient);
+            foreach (var kv in metadata)
+            {
+                existingMetadata[kv.Key] = kv.Value;
+            }
+
+            await blobClient.SetMetadataAsync(existingMetadata);
+        }
+
+        if (tags != null && tags.Count > 0)
+        {
+            var existingTags = await GetBlobTagsAsync(blobClient);
+            foreach (var kv in tags)
+            {
+                existingTags[kv.Key] = kv.Value;
+            }
+
+            await blobClient.SetTagsAsync(existingTags);
+        }
+
+        return true;
+    }
+
+    /// <inheritdoc/>
     public async Task<bool> DeleteFileAsync(string fileName)
     {
         var containerClient = GetContainerClient();
