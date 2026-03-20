@@ -1,4 +1,5 @@
 using DotNet.FileService.Api.Infrastructure.CorrelationId;
+using DotNet.FileService.Api.Infrastructure.CorrelationId.WebApi;
 using Microsoft.ApplicationInsights.Channel;
 using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.AspNetCore.Http;

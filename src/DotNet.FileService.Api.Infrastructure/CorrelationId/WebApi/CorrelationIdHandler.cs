@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Http;
 
-namespace DotNet.FileService.Api.Infrastructure.CorrelationId;
+namespace DotNet.FileService.Api.Infrastructure.CorrelationId.WebApi;
 
 /// <summary>
-/// A DelegatingHandler that forwards the correlation ID from the current HTTP context
-/// to outgoing requests via the <c>X-Correlation-ID</c> header.
+/// A DelegatingHandler that forwards the correlation ID to outgoing requests
+/// via the <c>X-Correlation-ID</c> header.
+/// Reads from <see cref="IHttpContextAccessor"/> first, then falls back to
+/// <see cref="CorrelationIdContext"/> for non-HTTP contexts such as Azure Functions.
 /// </summary>
 public class CorrelationIdHandler(IHttpContextAccessor httpContextAccessor) : DelegatingHandler
 {
@@ -14,7 +16,8 @@ public class CorrelationIdHandler(IHttpContextAccessor httpContextAccessor) : De
     {
         var correlationId = httpContextAccessor.HttpContext?
             .Items[CorrelationIdConstants.HttpContextItemKey]?
-            .ToString();
+            .ToString()
+            ?? CorrelationIdContext.Current;
 
         if (!string.IsNullOrEmpty(correlationId))
         {

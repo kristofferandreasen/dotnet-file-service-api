@@ -3,10 +3,11 @@ using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Http;
 
-namespace DotNet.FileService.Api.Infrastructure.CorrelationId;
+namespace DotNet.FileService.Api.Infrastructure.CorrelationId.WebApi;
 
 /// <summary>
-/// Adds the correlation ID to the <c>CustomDimensions</c> of every Application Insights telemetry item.
+/// Adds the correlation ID to the <c>CustomDimensions</c> of every Application Insights telemetry item
+/// for ASP.NET Core applications.
 /// </summary>
 public class CorrelationIdTelemetryInitializer(IHttpContextAccessor httpContextAccessor) : ITelemetryInitializer
 {

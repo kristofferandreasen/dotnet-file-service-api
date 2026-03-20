@@ -2,10 +2,10 @@ using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace DotNet.FileService.Api.Infrastructure.CorrelationId;
+namespace DotNet.FileService.Api.Infrastructure.CorrelationId.WebApi;
 
 /// <summary>
-/// Extension methods for registering and enabling correlation ID infrastructure.
+/// Extension methods for registering and enabling correlation ID infrastructure in ASP.NET Core applications.
 /// </summary>
 public static class CorrelationIdExtensions
 {
@@ -18,7 +18,7 @@ public static class CorrelationIdExtensions
         => app.UseMiddleware<CorrelationIdMiddleware>();
 
     /// <summary>
-    /// Registers correlation ID services: <see cref="CorrelationIdHandler"/> for forwarding
+    /// Registers correlation ID services for ASP.NET Core: <see cref="CorrelationIdHandler"/> for forwarding
     /// the header on outgoing requests, and <see cref="CorrelationIdTelemetryInitializer"/>
     /// for enriching Application Insights telemetry.
     /// Chain <c>.AddHttpMessageHandler&lt;CorrelationIdHandler&gt;()</c> on your HTTP client builder

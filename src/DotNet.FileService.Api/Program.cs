@@ -3,7 +3,7 @@ using DotNet.FileService.Api.Authorization;
 using DotNet.FileService.Api.Endpoints.V1.Files;
 using DotNet.FileService.Api.Endpoints.V1.SasTokens;
 using DotNet.FileService.Api.Infrastructure.BlobStorage;
-using DotNet.FileService.Api.Infrastructure.CorrelationId;
+using DotNet.FileService.Api.Infrastructure.CorrelationId.WebApi;
 using DotNet.FileService.Api.Infrastructure.Options;
 using DotNet.FileService.Api.Swagger;
 
