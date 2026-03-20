@@ -1,3 +1,5 @@
+using System.Text.Json;
+using DotNet.FileService.Api.Infrastructure.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Refit;
 
@@ -6,7 +8,8 @@ namespace DotNet.FileService.Api.Client.DependencyInjection;
 public static class FileServiceApiExtensions
 {
     /// <summary>
-    /// Registers a typed Refit client configured to use Azure AD Bearer tokens.
+    /// Registers a typed Refit client configured to use Azure AD Bearer tokens
+    /// and the standard project JSON serialization settings.
     /// </summary>
     /// <param name="services">The <see cref="IServiceCollection"/> to add the client to.</param>
     /// <param name="scope">The Azure AD scope for token acquisition.</param>
@@ -17,7 +20,11 @@ public static class FileServiceApiExtensions
         string scope,
         Action<HttpClient>? configureClient = null)
         => services
-            .AddRefitClient<IFileServiceApiClient>()
+            .AddRefitClient<IFileServiceApiClient>(new RefitSettings
+            {
+                ContentSerializer = new SystemTextJsonContentSerializer(
+                    new JsonSerializerOptions().ConfigureStandardOptions()),
+            })
             .ConfigureHttpClient(configureClient ?? (_ => { }))
             .AddHttpMessageHandler(() => new AzureAuthHandler(scope));
 }
