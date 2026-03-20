@@ -3,6 +3,7 @@ using DotNet.FileService.Api.Authorization;
 using DotNet.FileService.Api.Endpoints.V1.Files;
 using DotNet.FileService.Api.Endpoints.V1.SasTokens;
 using DotNet.FileService.Api.Infrastructure.BlobStorage;
+using DotNet.FileService.Api.Infrastructure.CorrelationId;
 using DotNet.FileService.Api.Infrastructure.Options;
 using DotNet.FileService.Api.Swagger;
 
@@ -27,12 +28,12 @@ var serviceOptions = builder.Configuration
     .Get<ServiceOptions>()!;
 
 builder.Services.AddApplicationInsightsTelemetry();
+builder.Services.AddCorrelationId();
 builder.Services.ConfigureMicrosoftSecurity(azureAdOptions);
 builder.Services.AddAuthorization();
 
 builder.Services.AddConfiguredSwagger(azureAdOptions);
 builder.Services.AddProblemDetails();
-builder.Services.AddHttpContextAccessor();
 builder.Services.AddHealthChecks();
 
 builder.Services.AddAuthorizationBuilder()
@@ -54,6 +55,7 @@ builder.Services.AddSingleton<ISasTokenService>(
 var app = builder.Build();
 
 app.UseHttpsRedirection();
+app.UseCorrelationId();
 
 app.UseExceptionHandler();
 app.UseStatusCodePages();
